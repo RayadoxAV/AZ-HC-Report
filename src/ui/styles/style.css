@@ -1,0 +1,312 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: #eaf1fa;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+div.title-bar {
+  display: flex;
+  flex-direction: row;
+  height: 2.5rem;
+  -webkit-app-region: drag;
+  flex-shrink: 0;
+}
+
+div.title-bar > div.information-container {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+
+div.title-bar > div.information-container > span.title {
+  font-size: 0.875rem;
+  padding-left: 0.5rem;
+}
+
+div.title-bar > div.window-controls {
+  margin-left: auto;
+  display: flex;
+  gap: 0;
+}
+
+div.window-controls > button.control {
+  width: 3rem;
+  height: 100%;
+  border: none;
+  background-color: transparent;
+  transition: all 150ms cubic-bezier(0.2, 0, 0, 1);
+  -webkit-app-region: no-drag;
+}
+
+div.window-controls > button.control:hover {
+  background-color: #e1e7f4;
+}
+
+div.window-controls > button[data-type="close"]:hover {
+  background-color: #ff0046;
+  color: white;
+}
+
+
+div.main-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+}
+
+div.progress-tracker {
+  width: 80%;
+  display: flex;
+  padding: 2rem 0rem 0rem 0rem;
+}
+
+div.progress-tracker > div.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  gap: 0.25rem;
+}
+
+div.progress-tracker > div.step > button.step-button {
+  border: none;
+  width: 2rem;
+  aspect-ratio: 1;
+  border-radius: 2rem;
+  font-weight: 500;
+  cursor: pointer;
+  background-color: transparent;
+  user-select: none;
+}
+
+div.progress-tracker > div.step > button.step-button:hover {
+  background-color: #e5e8ed;
+}
+
+div.progress-tracker > div.step.active::before {
+  content: '';
+  display: flex;
+  height: 1rem;
+  aspect-ratio: 1;
+  background-image: url('../assets/icons/chevron_down.svg');
+  background-size: auto;
+  background-position: center;
+  position: absolute;
+  top: -1.5rem;
+}
+
+div.progress-tracker > div.step.active > button.step-button {
+  background-color: #c2e7ff;
+}
+
+div.progress-tracker > div.step > span.step-title {
+  font-size: 14px;
+  user-select: none;
+}
+
+
+div.progress-tracker > div.line-separator {
+  flex-grow: 1;
+  height: 1px;
+  background-color: black;
+  
+}
+
+div.container {
+  width: calc(100% - 2rem);
+  flex-grow: 1;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+div.content {
+  display: none;
+  height: 100%;
+  max-height: 100%;
+}
+
+div.content[data-index="0"] {
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-color: #f2f6fb;
+  border-radius: 2rem;
+}
+
+div.content[data-index="0"] > div.information {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+div.content[data-index="0"] > div.information > span.icon {
+  -webkit-mask-image: url('../assets/icons/upload.svg');
+  mask-image: url('../assets/icons/upload.svg');
+  -webkit-mask-size: 100%;
+  background-color: #a7b6eb;
+  width: 4rem;
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+
+div.content[data-index="0"] > div.information > span.text {
+  font-size: 15px;
+  user-select: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  pointer-events: none;
+}
+
+div.content[data-index="0"] > div.information > span.text.file-name {
+  background-color: #e1e6f7;
+}
+
+div.content[data-index="0"] > div.information > button.continue {
+  opacity: 0;
+  pointer-events: none;
+}
+
+div.content[data-index="1"] {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+div.content[data-index="1"] > div.diff-viewer {
+  flex-grow: 1;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  overflow: hidden;
+  gap: 0.5rem;
+}
+
+div.content[data-index="1"] > div.diff-viewer.single-view > div.diff-view:nth-child(1) {
+  width: 100%;
+}
+
+div.content[data-index="1"] > div.diff-viewer.single-view > div.diff-view:nth-child(2) {
+  display: none;
+}
+
+div.diff-viewer > div.diff-view {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: auto;
+}
+
+div.diff-viewer > div.diff-view > span.title {
+  font-size: 18px;
+  font-weight: 400;
+} 
+
+
+div.diff-viewer > div.diff-view > table {
+  border: 1px solid #cccccc;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+div.diff-viewer > div.diff-view > table th {
+  font-size: 14px;
+  font-weight: 500;
+  position: sticky;
+  top: 0;
+  resize: horizontal;
+  background-color: #f1f5ff;
+  border: 1px solid #CCCCCC;
+  overflow: auto;
+  height: 2rem;
+}
+
+div.diff-viewer > div.diff-view > table th:nth-child(4) {
+  width: 20%;
+}
+
+div.diff-viewer > div.diff-view > table th:nth-child(7) {
+  width: 20%;
+}
+
+/* div.diff-viewer > div.diff-view > table th:nth-child(9) {
+  width: 10%;
+} */
+
+div.diff-viewer > div.diff-view > table th:nth-child(10) {
+  width: 15%;
+}
+
+div.diff-viewer > div.diff-view > table {
+  font-size: 13px;
+}
+
+th::-webkit-resizer {
+  display: none;
+}
+
+div.diff-viewer > div.diff-view > table td.before {
+  background-color: #ffb7bd;
+}
+
+div.diff-viewer > div.diff-view > table td.after {
+  background-color: #b7ffb7;
+}
+
+div.diff-viewer > div.diff-view > table td:nth-child(1) {
+  text-align: center;
+}
+
+div.diff-viewer > div.diff-view > table td:nth-child(2) {
+  text-align: center;
+}
+
+div.diff-viewer > div.diff-view > table td:nth-child(3) {
+  text-align: center;
+}
+
+div.diff-viewer > div.diff-view > table td:nth-child(4) {
+  text-align: left;
+}
+
+div.diff-viewer > div.diff-view > table td:nth-child(5) {
+  text-align: center;
+}
+
+div.diff-viewer > div.diff-view > table td:nth-child(6) {
+  text-align: center;
+}
+
+div.diff-viewer > div.diff-view > table td:nth-child(7) {
+  text-align: left;
+}
+
+div.diff-viewer > div.diff-view > table td:nth-child(8) {
+  text-align: center;
+}
+
+div.diff-viewer > div.diff-view > table td:nth-child(9) {
+  text-align: center;
+}
+
+div.diff-viewer > div.diff-view > table td:nth-child(10) {
+  text-align: left;
+}
+
+div.diff-viewer > div.diff-view > table td:nth-child(11) {
+  text-align: center;
+}
