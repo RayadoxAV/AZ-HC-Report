@@ -179,7 +179,6 @@ div.content[data-index="0"] > div.information > button.continue {
 }
 
 div.content[data-index="1"] {
-  display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -310,3 +309,10 @@ div.diff-viewer > div.diff-view > table td:nth-child(10) {
 div.diff-viewer > div.diff-view > table td:nth-child(11) {
   text-align: center;
 }
+
+
+div.content[data-index="2"] {
+  justify-content: center;
+  align-items: center;
+}
+

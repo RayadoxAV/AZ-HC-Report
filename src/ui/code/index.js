@@ -32,7 +32,6 @@ function listenForIPCEvents() {
   ipcRenderer.on('file-events', (_, args) => {
     switch (args.name) {
       case 'file-path-provided': {
-        console.log(args.value);
         const filePath = args.value;
 
         if (filePath.split('.').pop() !== 'xlsx' && filePath.split('.').pop() !== 'xls' && filePath.split('.').pop() !== 'xlsm') {
@@ -64,7 +63,8 @@ function listenForIPCEvents() {
           goToStep(1);
           initComparator(response);
         } catch (error) {
-          alert(error);
+          // alert(error);
+          console.log(error);
         }
 
         break;
@@ -72,10 +72,10 @@ function listenForIPCEvents() {
 
       case 'entry-uploaded': {
         alert('Entry loaded sucessfully');
-        console.log(args.data);
         if (args.data.isFirst) {
           window.location.reload();
         } else {
+          initGenerator(args.data.changes);
           goToStep(2);
         }
         break;

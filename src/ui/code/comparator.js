@@ -7,7 +7,7 @@ function initComparator(entryData) {
     const entry = entryData.entryToUpload;
     const week = dateToWeek(new Date());
 
-    fillFirstDiffView(`First HC File Load - WK${week}`, entry.zoners, '');
+    fillFirstDiffView(`First HC File Load - WK${week}`, generateTableHTML(entry.zoners, 0));
 
     const continueButton = document.getElementById('continue-comparator');
 
@@ -23,62 +23,62 @@ function initComparator(entryData) {
     // TODO: Compare entries and show differences
     const diffViewer = document.getElementById('diff-viewer');
     diffViewer.classList.remove('single-view');
-    console.log(entryData);
 
-
-    compare(entryData.pastEntry, entryData.entryToUpload);
+    const result = compare(entryData.pastEntry, entryData.entryToUpload);
 
     const continueButton = document.getElementById('continue-comparator');
 
     continueButton.innerText = 'Continue';
     continueButton.onclick = () => {
-      initGenerator();
-      goToStep(2);
+      ipcRenderer.send('file-events', {name: 'add-entry', data: { entry: entryData.entryToUpload, isFirst: false, changes: result } });
+      // initGenerator();
+      // goToStep(2);
     };
   }
 }
 
-function fillFirstDiffView(title, zoners, cssClass) {
-  let viewHTML = '';
+function fillFirstDiffView(title, zonersHTML) {
 
-  const fields = ['employeeId', 'ignitionId', 'cc', 'name', 'hireDate', 'jobCode', 'position', 'grade', 'supervisorId', 'supervisorName'];
+  // let viewHTML = '';
 
-  for (let i = 0; i < zoners.length; i++) {
-    const zoner = zoners[i];
-    viewHTML += `<tr>`;
-    if (zoner.changes.length > 0) {
+  // const fields = ['employeeId', 'ignitionId', 'cc', 'name', 'hireDate', 'jobCode', 'position', 'grade', 'supervisorId', 'supervisorName'];
 
-      fields.forEach((field) => {
+  // for (let i = 0; i < zoners.length; i++) {
+  //   const zoner = zoners[i];
+  //   viewHTML += `<tr>`;
+  //   if (zoner.changes.length > 0) {
 
-        if (isChanged(field, zoner.changes)) {
-          viewHTML += `<td class="before">${zoner[field]}</td>`
-        } else {
-          if (field === 'hireDate') {
-            viewHTML += `<td>${zoner[field].split('T')[0].replace(/\-/g, '/')}</td>`;
-          } else {
-            viewHTML += `<td>${zoner[field]}</td>`;
-          }
-        }
+  //     fields.forEach((field) => {
 
-      });
+  //       if (isChanged(field, zoner.changes)) {
+  //         viewHTML += `<td class="${cssClass}">${zoner[field]}</td>`
+  //       } else {
+  //         if (field === 'hireDate') {
+  //           viewHTML += `<td>${zoner[field].split('T')[0].replace(/\-/g, '/')}</td>`;
+  //         } else {
+  //           viewHTML += `<td>${zoner[field]}</td>`;
+  //         }
+  //       }
 
-      viewHTML += `</tr>`;
-    } else {
-      viewHTML +=
-        `<tr>
-      <td>${zoner.employeeId}</td>
-      <td>${zoner.ignitionId}</td>
-      <td>${zoner.cc}</td>
-      <td>${zoner.name}</td>
-      <td>${zoner.hireDate.split('T')[0].replace(/\-/g, '/')}</td>
-      <td>${zoner.jobCode}</td>
-      <td>${zoner.position}</td>
-      <td>${zoner.grade}</td>
-      <td>${zoner.supervisorId}</td>
-      <td>${zoner.supervisorName}</td>
-    </tr>`;
-    }
-  }
+  //     });
+
+  //     viewHTML += `</tr>`;
+  //   } else {
+  //     viewHTML +=
+  //       `<tr>
+  //     <td>${zoner.employeeId}</td>
+  //     <td>${zoner.ignitionId}</td>
+  //     <td>${zoner.cc}</td>
+  //     <td>${zoner.name}</td>
+  //     <td>${zoner.hireDate.split('T')[0].replace(/\-/g, '/')}</td>
+  //     <td>${zoner.jobCode}</td>
+  //     <td>${zoner.position}</td>
+  //     <td>${zoner.grade}</td>
+  //     <td>${zoner.supervisorId}</td>
+  //     <td>${zoner.supervisorName}</td>
+  //   </tr>`;
+  //   }
+  // }
 
   const diffView = document.getElementById('diff-view-1');
 
@@ -86,11 +86,18 @@ function fillFirstDiffView(title, zoners, cssClass) {
   titleSpan.innerText = title;
 
   const tableBody = diffView.querySelector('table > tbody');
-  tableBody.innerHTML = viewHTML;
+  tableBody.innerHTML = zonersHTML;
 }
 
-function fillSecondDiffView(title, zoners, cssClass) {
-  let viewHTML = '';
+function fillSecondDiffView(title, zonersHTML) {
+  const diffView = document.getElementById('diff-view-2');
+
+  const titleSpan = diffView.querySelector('span.title');
+  titleSpan.innerText = title;
+
+  const tableBody = diffView.querySelector('table > tbody');
+  tableBody.innerHTML = zonersHTML;
+  /* let viewHTML = '';
   const fields = ['employeeId', 'ignitionId', 'cc', 'name', 'hireDate', 'jobCode', 'position', 'grade', 'supervisorId', 'supervisorName'];
 
   for (let i = 0; i < zoners.length; i++) {
@@ -101,7 +108,7 @@ function fillSecondDiffView(title, zoners, cssClass) {
       fields.forEach((field) => {
 
         if (isChanged(field, zoner.changes)) {
-          viewHTML += `<td class="after">${zoner[field]}</td>`
+          viewHTML += `<td class="${cssClass}">${zoner[field]}</td>`
         } else {
           if (field === 'hireDate') {
             viewHTML += `<td>${zoner[field].split('T')[0].replace(/\-/g, '/')}</td>`;
@@ -136,11 +143,10 @@ function fillSecondDiffView(title, zoners, cssClass) {
   titleSpan.innerText = title;
 
   const tableBody = diffView.querySelector('table > tbody');
-  tableBody.innerHTML = viewHTML;
+  tableBody.innerHTML = viewHTML; */
 }
 
 function compare(firstEntry, secondEntry) {
-  console.log(firstEntry, secondEntry);
 
   const firstZoners = firstEntry.zoners;
   const secondZoners = secondEntry.zoners;
@@ -160,8 +166,6 @@ function compare(firstEntry, secondEntry) {
   }
 
   if (matchedZoners === firstZoners.length) {
-    console.log('Same length. Same people');
-    // TODO: Check for differences.
 
     const changedFolks = [];
 
@@ -175,7 +179,7 @@ function compare(firstEntry, secondEntry) {
           const changes = getChangedFieldsArray(zoner, zoner2);
 
           if (changes.length > 0) {
-            changedFolks.push( { zoner, zoner2, changes} );
+            changedFolks.push({ zoner, zoner2, changes });
           }
         }
       }
@@ -195,17 +199,57 @@ function compare(firstEntry, secondEntry) {
     });
 
     console.log(changedZoners1);
-
-    fillFirstDiffView(`HC Report from WK${firstEntry.week}`, changedZoners1, 'before');
+    console.log(changedZoners2);
 
     const currentWeek = dateToWeek(new Date());
 
-    fillSecondDiffView(`HC Report from WK${currentWeek}`, changedZoners2, 'after');
+    fillFirstDiffView(`HC Report from WK${firstEntry.week}`, generateTableHTML(changedZoners1, 0));
+    fillSecondDiffView(`HC Report from WK${currentWeek}`, generateTableHTML(changedZoners2, 1));
+    return [changedZoners1, changedZoners2];
   } else {
     const [matches, downs, ups] = setTheory(firstZoners, secondZoners);
 
     console.log(matches, downs, ups);
 
+    // For the matches we have to compare them to see if they have changes.
+    // It is guaranteed to have the same number of elements to compare so it should be the same as the comparison above.
+
+    const changedZoners = [];
+
+    for (let i = 0; i < matches.length; i++) {
+      const zoner = matches[i].first;
+      const zoner2 = matches[i].second;
+
+      const changes = getChangedFieldsArray(zoner, zoner2);
+
+      if (changes.length > 0) {
+        changedZoners.push({ zoner, zoner2, changes });
+      }
+    }
+
+    const changedZoners1 = changedZoners.map((value) => {
+      const zoner = { ...value.zoner };
+      zoner.changes = value.changes;
+      return zoner;
+    });
+
+    const changedZoners2 = changedZoners.map((value) => {
+      const zoner = { ...value.zoner2 };
+      zoner.changes = value.changes;
+      return zoner;
+    });
+
+    changedZoners1.push(...downs);
+    changedZoners1.push(...ups);
+
+    changedZoners2.push(...downs);
+    changedZoners2.push(...ups);
+
+    const currentWeek = dateToWeek(new Date());
+
+    fillFirstDiffView(`HC Report from WK${firstEntry.week}`, generateTableHTML(changedZoners1, 0));
+    fillSecondDiffView(`HC Report from WK${currentWeek}`, generateTableHTML(changedZoners2, 1));
+    return [changedZoners1, changedZoners2];
     // const sameEmployees = [];
 
     // for (let i = 0; i < firstZoners.length; i++) {
@@ -239,7 +283,7 @@ function compare(firstEntry, secondEntry) {
     //     }
     //   }
     // }
-    
+
     // // Get Zoners that are not in the new array. (They were deleted)
     // for (let i = 0; i < firstZoners.length; i++) {
     //   const zoner = firstZoners[i];
@@ -422,7 +466,7 @@ function getChangedFieldsArray(zoner, zoner2) {
       {
         name: 'manager',
         displayName: 'Manager',
-        beofre: zoner.manager,
+        before: zoner.manager,
         after: zoner2.manager
       }
     );
@@ -432,16 +476,20 @@ function getChangedFieldsArray(zoner, zoner2) {
 }
 
 function isChanged(field, changes) {
-  console.log(changes);
-  let changed = false;
-  for (let i = 0; i < changes.length; i++) {
-    if (field === changes[i].name) {
-      changed = true;
-      break;
+
+  if (changes) {
+    let changed = false;
+    for (let i = 0; i < changes.length; i++) {
+      if (field === changes[i].name) {
+        changed = true;
+        break;
+      }
     }
+
+    return changed;
   }
 
-  return changed;
+  return false;
 }
 
 function setTheory(a, b) {
@@ -459,7 +507,7 @@ function setTheory(a, b) {
       if (elementA.ignitionId === elementB.ignitionId) {
         matches.push(
           {
-            fist: elementA,
+            first: elementA,
             second: elementB
           }
         );
@@ -469,6 +517,7 @@ function setTheory(a, b) {
     }
 
     if (!found) {
+      elementA.isOld = true;
       downs.push(elementA);
     }
   }
@@ -479,7 +528,7 @@ function setTheory(a, b) {
 
     for (let j = 0; j < a.length; j++) {
       const elementA = a[j];
-      
+
       if (elementB.ignitionId === elementA.ignitionId) {
         found = true;
         break;
@@ -487,9 +536,130 @@ function setTheory(a, b) {
     }
 
     if (!found) {
+      elementB.isNew = true;
       ups.push(elementB);
     }
   }
 
   return [matches, downs, ups];
+}
+
+function generateTableHTML(zoners, diffEditorId) {
+  let tableHTML = '';
+  const fields = ['employeeId', 'ignitionId', 'cc', 'name', 'hireDate', 'jobCode', 'position', 'grade', 'supervisorId', 'supervisorName'];
+
+  for (let i = 0; i < zoners.length; i++) {
+    const zoner = zoners[i];
+
+    tableHTML += '<tr>';
+    if (zoner.isNew) {
+      if (diffEditorId === 1) {
+        tableHTML +=
+          `
+        <td class="after">${zoner.employeeId}</td>
+        <td class="after">${zoner.ignitionId}</td>
+        <td class="after">${zoner.cc}</td>
+        <td class="after">${zoner.name}</td>
+        <td class="after">${zoner.hireDate.split('T')[0].replace(/\-/g, '/')}</td>
+        <td class="after">${zoner.jobCode}</td>
+        <td class="after">${zoner.position}</td>
+        <td class="after">${zoner.grade}</td>
+        <td class="after">${zoner.supervisorId}</td>
+        <td class="after">${zoner.supervisorName}</td>
+        `;
+      }
+    } else if (zoner.isOld) {
+
+      tableHTML +=
+        `
+      <td class="${diffEditorId === 0 ? '' : 'before'}">${zoner.employeeId}</td>
+      <td class="${diffEditorId === 0 ? '' : 'before'}">${zoner.ignitionId}</td>
+      <td class="${diffEditorId === 0 ? '' : 'before'}">${zoner.cc}</td>
+      <td class="${diffEditorId === 0 ? '' : 'before'}">${zoner.name}</td>
+      <td class="${diffEditorId === 0 ? '' : 'before'}">${zoner.hireDate.split('T')[0].replace(/\-/g, '/')}</td>
+      <td class="${diffEditorId === 0 ? '' : 'before'}">${zoner.jobCode}</td>
+      <td class="${diffEditorId === 0 ? '' : 'before'}">${zoner.position}</td>
+      <td class="${diffEditorId === 0 ? '' : 'before'}">${zoner.grade}</td>
+      <td class="${diffEditorId === 0 ? '' : 'before'}">${zoner.supervisorId}</td>
+      <td class="${diffEditorId === 0 ? '' : 'before'}">${zoner.supervisorName}</td>`;
+
+    } else if (zoner.changes) {
+      for (let j = 0; j < fields.length; j++) {
+        const field = fields[j];
+        if (isChanged(field, zoner.changes)) {
+          if (field === 'hireDate') {
+            tableHTML += `<td class="${diffEditorId === 0 ? 'before' : 'after'}">${zoner[field].split('T')[0].replace(/\-/g, '/')}</td>`;
+          } else {
+            tableHTML += `<td class="${diffEditorId === 0 ? 'before' : 'after'}">${zoner[field]}</td>`;
+          }
+        } else {
+          if (field === 'hireDate') {
+            tableHTML += `<td>${zoner[field].split('T')[0].replace(/\-/g, '/')}</td>`;
+          } else {
+            tableHTML += `<td>${zoner[field]}</td>`;
+          }
+        }
+      }
+    } else {
+      tableHTML +=
+        `<td>${zoner.employeeId}</td>
+        <td>${zoner.ignitionId}</td>
+        <td>${zoner.cc}</td>
+        <td>${zoner.name}</td>
+        <td>${zoner.hireDate.split('T')[0].replace(/\-/g, '/')}</td>
+        <td>${zoner.jobCode}</td>
+        <td>${zoner.position}</td>
+        <td>${zoner.grade}</td>
+        <td>${zoner.supervisorId}</td>
+        <td>${zoner.supervisorName}</td>`;
+      //   </tr>`;
+    }
+
+    // for (let j = 0; j < fields.length; j++) {
+    //   const field = fields[j];
+
+    //   if (zoner.isNew) {
+    //     tableHTML +=
+    //       `<tr>-==
+    //       <td classs="before">${zoner.employeeId}</td>
+    //       <td classs="before">${zoner.ignitionId}</td>
+    //       <td classs="before">${zoner.cc}</td>
+    //       <td classs="before">${zoner.name}</td>
+    //       <td classs="before">${zoner.hireDate.split('T')[0].replace(/\-/g, '/')}</td>
+    //       <td classs="before">${zoner.jobCode}</td>
+    //       <td classs="before">${zoner.position}</td>
+    //       <td classs="before">${zoner.grade}</td>
+    //       <td classs="before">${zoner.supervisorId}</td>
+    //       <td classs="before">${zoner.supervisorName}</td>
+    //     </tr>`;
+    //   } else if (zoner.isOld) {
+
+    //   } else if (isChanged(field, zoner.changes)) {
+
+    //   } else {
+    //     showAsIs = true;
+    //   }
+    // }
+
+    // if (showAsIs) {
+    //   tableHTML += 
+    //   `<tr>
+    //     <td>${zoner.employeeId}</td>
+    //     <td>${zoner.ignitionId}</td>
+    //     <td>${zoner.cc}</td>
+    //     <td>${zoner.name}</td>
+    //     <td>${zoner.hireDate.split('T')[0].replace(/\-/g, '/')}</td>
+    //     <td>${zoner.jobCode}</td>
+    //     <td>${zoner.position}</td>
+    //     <td>${zoner.grade}</td>
+    //     <td>${zoner.supervisorId}</td>
+    //     <td>${zoner.supervisorName}</td>
+    //   </tr>`;
+    // }
+
+    tableHTML += '</tr>';
+  }
+
+
+  return tableHTML;
 }

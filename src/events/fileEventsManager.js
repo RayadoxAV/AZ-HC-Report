@@ -34,9 +34,9 @@ class FileManager {
       }
 
       case 'add-entry': {
-        await FileManager.addEntryToDb(args.data.entry);
-        // ipcRenderer.send('entry-uploaded', { isFirst: args.data.isFirst });
-        BrowserWindow.getAllWindows()[0].webContents.send('data-events', { name: 'entry-uploaded', data: { isFirst: args.data.isFirst } });
+        // TODO: RESTORE THIS
+        // await FileManager.addEntryToDb(args.data.entry);
+        BrowserWindow.getAllWindows()[0].webContents.send('data-events', { name: 'entry-uploaded', data: { isFirst: args.data.isFirst, changes: args.data.changes } });
 
         break;
       }
