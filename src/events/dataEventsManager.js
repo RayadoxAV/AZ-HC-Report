@@ -18,8 +18,9 @@ class DataManager {
     const resultWorkbook = await FileManager.readFileFromPath(filePath);
 
     if (resultWorkbook) {
-      const sheet =resultWorkbook.worksheets[0];
+      const sheet = resultWorkbook.worksheets[0];
       if (sheet) {
+        const week = Number.parseInt(filePath.split('W')[1].split('-')[0]);
       //   // const range = sheet['!ref']; // The complete range of the sheet.
 
         const lastRowIndex = this.getLastRowIndex(sheet);
@@ -27,10 +28,10 @@ class DataManager {
 
         await FileManager.createDBIfNotExists();
 
-        let currentWeek = util.dateToWeek(new Date());
+        // let currentWeek = util.dateToWeek(new Date());
         
         const entryToUpload = {
-          week: currentWeek,
+          week: week,
           zoners: zoners
         };
 
@@ -71,22 +72,24 @@ class DataManager {
 
     for (let i = 1; i < lastRowIndex; i++) {
       const row = sheet['_rows'][i];
+      if (row['_cells'][0].value) {
+        const zoner = {
+          employeeId: row['_cells'][0].value,
+          ignitionId: row['_cells'][1].value,
+          cc: row['_cells'][2].value,
+          name: row['_cells'][3].value,
+          hireDate: row['_cells'][4].value,
+          jobCode: row['_cells'][5].value,
+          position: row['_cells'][6].value,
+          grade: row['_cells'][7].value,
+          supervisorId: row['_cells'][8].value,
+          supervisorName: row['_cells'][9].value,
+          manager: util.supervisorMap[row['_cells'][8].value]
+        };
+  
+        zoners.push(zoner);
+      }
 
-      const zoner = {
-        employeeId: row['_cells'][0].value,
-        ignitionId: row['_cells'][1].value,
-        cc: row['_cells'][2].value,
-        name: row['_cells'][3].value,
-        hireDate: row['_cells'][4].value,
-        jobCode: row['_cells'][5].value,
-        position: row['_cells'][6].value,
-        grade: row['_cells'][7].value,
-        supervisorId: row['_cells'][8].value,
-        supervisorName: row['_cells'][9].value,
-        manager: util.supervisorMap[row['_cells'][8].value]
-      };
-
-      zoners.push(zoner);
     }
     return zoners;
   }

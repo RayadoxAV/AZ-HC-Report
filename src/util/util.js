@@ -1,4 +1,5 @@
 module.exports = {
+  baseFilePath: 'C:/users/rpaz/documents/testing/az_hc_rp',
   isNumeric: function isNumeric(string) {
     if (typeof string != 'string') {
       return false;
@@ -45,7 +46,7 @@ module.exports = {
     '10555194': 'Teresa',
     '10564026': 'Teresa',
     '10567717': 'Laura',
-    '10550641': 'Laura',
+    '10550641': 'Teresa',
     '10564560': 'Gema',
     '10551115': 'Laura',
     '10551095': 'Corina',
@@ -62,7 +63,7 @@ module.exports = {
     '10561918': 'Gema',
     '10550051': 'Javier',
     '10569728': 'Marisol',
-    '10550052': 'Marisol',
+    '10550052': 'Gema',
     '10550124': 'Marisol',
     '10782574': 'Gema',
     '10550498': 'Marisol',

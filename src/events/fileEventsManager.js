@@ -1,7 +1,8 @@
-const { BrowserWindow, dialog, ipcRenderer } = require('electron');
+const { BrowserWindow, dialog, shell } = require('electron');
 const { Workbook } = require('exceljs');
 const fs = require('fs');
 const { promisify } = require('util');
+const util = require('../util/util');
 
 const mkdir = promisify(fs.mkdir);
 const writeFile = promisify(fs.writeFile);
@@ -35,12 +36,21 @@ class FileManager {
 
       case 'add-entry': {
         // TODO: RESTORE THIS
-        // await FileManager.addEntryToDb(args.data.entry);
-        BrowserWindow.getAllWindows()[0].webContents.send('data-events', { name: 'entry-uploaded', data: { isFirst: args.data.isFirst, changes: args.data.changes } });
+        await FileManager.addEntryToDb(args.data.entry);
+        BrowserWindow.getAllWindows()[0].webContents.send('data-events', { name: 'entry-uploaded', data: { isFirst: args.data.isFirst, changes: args.data.changes, pastWeek: args.data.pastWeek } });
 
         break;
       }
 
+      case 'file-write': {
+        await FileManager.writeFileContents(args.data.contents, args.data.fileName);
+        BrowserWindow.getAllWindows()[0].webContents.send('file-events', { name: 'file-message', message: 'Report email generated successfully' });
+        shell.openPath(`${util.baseFilePath}/${args.data.fileName}`);
+        // shell.openExternal('https://autozone1com.sharepoint.com/:x:/r/sites/Merch-Leadership/SharedDocuments/Unix - CC - Anniversaries - Hibrido/CC and Anniversaries - Merch.xlsx')
+        shell.openExternal('https://autozone1com.sharepoint.com/:x:/r/sites/Merch-Leadership/_layouts/15/Doc.aspx?sourcedoc=%7BEA5492BD-7739-47EE-942C-4E878B2FFFA3%7D&file=CC%20and%20Anniversaries%20-%20Merch.xlsx&wdLOR=c750BDEB2-7C3F-45DD-828B-F7D91382FEC1&fromShare=true&action=default&mobileredirect=true');
+        break;
+      }
+      
       default: {
         break;
       }
@@ -176,6 +186,10 @@ class FileManager {
     }
 
     return added;
+  }
+
+  static async writeFileContents(contents, name) {
+    await writeFile(`${this.dbFolder}\\${name}`, contents, { encoding: 'utf-8' });
   }
 }
 

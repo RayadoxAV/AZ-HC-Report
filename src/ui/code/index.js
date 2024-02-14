@@ -75,7 +75,7 @@ function listenForIPCEvents() {
         if (args.data.isFirst) {
           window.location.reload();
         } else {
-          initGenerator(args.data.changes);
+          initGenerator(args.data.changes, args.data.pastWeek);
           goToStep(2);
         }
         break;
@@ -107,8 +107,9 @@ function onDrop(event) {
 
     const file = {
       name: resultFile.name.split('\\').pop(),
-      path: resultFile.name
+      path: resultFile.path
     };
+
 
     displayFile(file.name);
     enableNextStep(file.path);

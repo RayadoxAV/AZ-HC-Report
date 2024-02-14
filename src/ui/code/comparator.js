@@ -1,23 +1,24 @@
 
 function initComparator(entryData) {
+  console.log(entryData);
   if (entryData.isFirstReport) {
     const diffViewer = document.getElementById('diff-viewer');
     diffViewer.classList.add('single-view');
 
     const entry = entryData.entryToUpload;
-    const week = dateToWeek(new Date());
+    const week = entry.week;
 
     fillFirstDiffView(`First HC File Load - WK${week}`, generateTableHTML(entry.zoners, 0));
-
+    // console.log(generateTableHTML(entry.zoners, 0));
     const continueButton = document.getElementById('continue-comparator');
 
     continueButton.innerText = 'Upload';
     continueButton.onclick = () => {
-      const entry = {
-        week: dateToWeek(new Date()),
-        zoners: zoners
+      const newEntry = {
+        week: week,
+        zoners: entryData.entryToUpload.zoners
       };
-      ipcRenderer.send('file-events', { name: 'add-entry', data: { entry, isFirst: isFirst } });
+      ipcRenderer.send('file-events', { name: 'add-entry', data: { entry: newEntry, isFirst: true } });
     };
   } else {
     // TODO: Compare entries and show differences
@@ -30,7 +31,7 @@ function initComparator(entryData) {
 
     continueButton.innerText = 'Continue';
     continueButton.onclick = () => {
-      ipcRenderer.send('file-events', {name: 'add-entry', data: { entry: entryData.entryToUpload, isFirst: false, changes: result } });
+      ipcRenderer.send('file-events', {name: 'add-entry', data: { entry: entryData.entryToUpload, isFirst: false, changes: result, pastWeek: entryData.pastEntry.week } });
       // initGenerator();
       // goToStep(2);
     };
@@ -198,18 +199,25 @@ function compare(firstEntry, secondEntry) {
       return zoner;
     });
 
-    console.log(changedZoners1);
-    console.log(changedZoners2);
-
     const currentWeek = dateToWeek(new Date());
 
     fillFirstDiffView(`HC Report from WK${firstEntry.week}`, generateTableHTML(changedZoners1, 0));
     fillSecondDiffView(`HC Report from WK${currentWeek}`, generateTableHTML(changedZoners2, 1));
+
+    if (changedZoners1.length === 0 && changedZoners2.length === 0) {
+      const diffView1 = document.getElementById('diff-view-1');
+      const diffView2 = document.getElementById('diff-view-2');
+
+      diffView1.style.display = 'none';
+      diffView2.style.display = 'none';
+
+      const noChangeDisplay = document.getElementById('no-change-display');
+      noChangeDisplay.style.display = 'flex';
+    }
+
     return [changedZoners1, changedZoners2];
   } else {
     const [matches, downs, ups] = setTheory(firstZoners, secondZoners);
-
-    console.log(matches, downs, ups);
 
     // For the matches we have to compare them to see if they have changes.
     // It is guaranteed to have the same number of elements to compare so it should be the same as the comparison above.
@@ -550,7 +558,7 @@ function generateTableHTML(zoners, diffEditorId) {
 
   for (let i = 0; i < zoners.length; i++) {
     const zoner = zoners[i];
-
+    console.log(zoner);
     tableHTML += '<tr>';
     if (zoner.isNew) {
       if (diffEditorId === 1) {
@@ -615,49 +623,8 @@ function generateTableHTML(zoners, diffEditorId) {
       //   </tr>`;
     }
 
-    // for (let j = 0; j < fields.length; j++) {
-    //   const field = fields[j];
-
-    //   if (zoner.isNew) {
-    //     tableHTML +=
-    //       `<tr>-==
-    //       <td classs="before">${zoner.employeeId}</td>
-    //       <td classs="before">${zoner.ignitionId}</td>
-    //       <td classs="before">${zoner.cc}</td>
-    //       <td classs="before">${zoner.name}</td>
-    //       <td classs="before">${zoner.hireDate.split('T')[0].replace(/\-/g, '/')}</td>
-    //       <td classs="before">${zoner.jobCode}</td>
-    //       <td classs="before">${zoner.position}</td>
-    //       <td classs="before">${zoner.grade}</td>
-    //       <td classs="before">${zoner.supervisorId}</td>
-    //       <td classs="before">${zoner.supervisorName}</td>
-    //     </tr>`;
-    //   } else if (zoner.isOld) {
-
-    //   } else if (isChanged(field, zoner.changes)) {
-
-    //   } else {
-    //     showAsIs = true;
-    //   }
-    // }
-
-    // if (showAsIs) {
-    //   tableHTML += 
-    //   `<tr>
-    //     <td>${zoner.employeeId}</td>
-    //     <td>${zoner.ignitionId}</td>
-    //     <td>${zoner.cc}</td>
-    //     <td>${zoner.name}</td>
-    //     <td>${zoner.hireDate.split('T')[0].replace(/\-/g, '/')}</td>
-    //     <td>${zoner.jobCode}</td>
-    //     <td>${zoner.position}</td>
-    //     <td>${zoner.grade}</td>
-    //     <td>${zoner.supervisorId}</td>
-    //     <td>${zoner.supervisorName}</td>
-    //   </tr>`;
-    // }
-
     tableHTML += '</tr>';
+    console.log(tableHTML);
   }
 
 
