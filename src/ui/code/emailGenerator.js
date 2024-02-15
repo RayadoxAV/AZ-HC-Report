@@ -1,5 +1,5 @@
 
-function initGenerator(changes, pastEntryWeek) {
+function initGenerator(changes, currentEntryWeek, pastEntryWeek) {
   const generateButton = document.getElementById('generate-email-button');
 
   generateButton.onclick = () => {
@@ -10,13 +10,13 @@ function initGenerator(changes, pastEntryWeek) {
     Object.keys(changesObject).forEach((key) => {
       Object.keys(changesObject[key]).forEach((manager) => {
         if (!hasChanged) {
-          hasChanged = changesObject[key][manager].length > 1;
+          hasChanged = changesObject[key][manager].length > 0;
         }
       });
     });
-
-
-    const emailString = generateEmail(changesObject, pastEntryWeek, hasChanged);
+    console.log(hasChanged);
+    console.log(currentEntryWeek);
+    const emailString = generateEmail(changesObject, currentEntryWeek, pastEntryWeek, hasChanged);
 
     // TODO: Check for no changes at all.
 
@@ -80,11 +80,11 @@ function generateChangesByCategory(changes) {
   return changesObject;
 }
 
-function generateEmail(changesObject, pastEntryWeek, hasChanged) {
-  const currentWeek = dateToWeek(new Date());
+function generateEmail(changesObject, currentEntryWeek, pastEntryWeek, hasChanged) {
+  // const currentWeek = dateToWeek(new Date());
   const emailString = 
   `To: <>
-Subject: Cambios HC WK${currentWeek} | Practicantes
+Subject: Cambios HC WK${currentEntryWeek} | Practicantes
 X-Unsent: 1
 Content-Type: text/html\n
 <html>
@@ -194,7 +194,7 @@ Content-Type: text/html\n
 <body>
   <span>Hello managers!</span>
   <br>
-  ${hasChanged ? generateGreeting(pastEntryWeek) : `<span>No hay cambios en el HC de la WK${currentWeek} con respecto a la WK${pastEntryWeek}.</span><br><br>`}
+  ${hasChanged ? generateGreeting(currentEntryWeek, pastEntryWeek) : `<span>No hay cambios en el HC de la WK${currentEntryWeek} con respecto a la WK${pastEntryWeek}.</span><br><br>`}
   ${generateChangesHTML(changesObject, pastEntryWeek)}
 </body>
 </html>`;
@@ -508,10 +508,9 @@ function generateChangesTable(changes, caseName, pastEntryWeek) {
   return tableHTML;
 }
 
-function generateGreeting(pastEntryWeek) {
-  const currentWeek = dateToWeek(new Date());
+function generateGreeting(currentEntryWeek, pastEntryWeek) {
   const changesString = 
-  `<span>Estos son los cambios que hay en la WK${currentWeek} respecto a la WK${pastEntryWeek}${(currentWeek - pastEntryWeek > 1) ? ` (No hubo reporte en la WK${currentWeek - 1}).` : '.'} Si los cambios son correctos favor de ignorar este correo. De lo contrario, favor de hacer las acciones pertinentes:</span>
+  `<span>Estos son los cambios que hay en la WK${currentEntryWeek} respecto a la WK${pastEntryWeek}${(currentEntryWeek - pastEntryWeek > 1) ? ` (No hubo reporte en la WK${currentEntryWeek - 1}).` : '.'} Si los cambios son correctos favor de ignorar este correo. De lo contrario, favor de hacer las acciones pertinentes:</span>
   <br><br>`;
 
   return changesString;

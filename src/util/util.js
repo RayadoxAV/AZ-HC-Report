@@ -1,5 +1,4 @@
 module.exports = {
-  baseFilePath: 'C:/users/rpaz/documents/testing/az_hc_rp',
   isNumeric: function isNumeric(string) {
     if (typeof string != 'string') {
       return false;

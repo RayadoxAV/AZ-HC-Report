@@ -18,47 +18,52 @@ class DataManager {
     const resultWorkbook = await FileManager.readFileFromPath(filePath);
 
     if (resultWorkbook) {
-      const sheet = resultWorkbook.worksheets[0];
-      if (sheet) {
-        const week = Number.parseInt(filePath.split('W')[1].split('-')[0]);
-      //   // const range = sheet['!ref']; // The complete range of the sheet.
+      try {
+        const sheet = resultWorkbook.worksheets[0];
+        if (sheet) {
+          const week = Number.parseInt(filePath.split('W')[1].split('-')[0]);
+          //   // const range = sheet['!ref']; // The complete range of the sheet.
 
-        const lastRowIndex = this.getLastRowIndex(sheet);
-        const zoners = this.generateZoners(sheet, lastRowIndex);
+          const lastRowIndex = this.getLastRowIndex(sheet);
+          const zoners = this.generateZoners(sheet, lastRowIndex);
 
-        await FileManager.createDBIfNotExists();
+          await FileManager.createDBIfNotExists();
 
-        // let currentWeek = util.dateToWeek(new Date());
-        
-        const entryToUpload = {
-          week: week,
-          zoners: zoners
-        };
+          // let currentWeek = util.dateToWeek(new Date());
 
-        let pastEntry = await FileManager.getMostRecentEntry();
+          const entryToUpload = {
+            week: week,
+            zoners: zoners
+          };
 
-        
-        const dataResponse = {
-          entryToUpload,
-          pastEntry,
-          isFirstReport: false
-        };
+          let pastEntry = await FileManager.getMostRecentEntry();
 
-        if (!pastEntry) {
-          // Not a single entry
-          dataResponse.isFirstReport = true;
+
+          const dataResponse = {
+            entryToUpload,
+            pastEntry,
+            isFirstReport: false
+          };
+
+          if (!pastEntry) {
+            // Not a single entry
+            dataResponse.isFirstReport = true;
+          }
+
+
+          // console.log(dataResponse);
+
+          BrowserWindow.getAllWindows()[0].webContents.send('data-events', { name: 'entry-data-provided', data: JSON.stringify(dataResponse) });
         }
-
-
-        // console.log(dataResponse);
-
-        BrowserWindow.getAllWindows()[0].webContents.send('data-events', { name: 'entry-data-provided', data: JSON.stringify(dataResponse) });
+      } catch (error) {
+        console.log(error);
+        BrowserWindow.getAllWindows()[0].webContents.send('error-events', { name: 'data-extraction', message: 'Error reading the file. Make sure is a valid HC file with the appropiate name' });
       }
     }
   }
 
   getLastRowIndex(sheet) {
-    
+
     let lastRow = 1;
     sheet.eachRow((_, rowNumber) => {
       lastRow = rowNumber;
@@ -86,7 +91,7 @@ class DataManager {
           supervisorName: row['_cells'][9].value,
           manager: util.supervisorMap[row['_cells'][8].value]
         };
-  
+
         zoners.push(zoner);
       }
 

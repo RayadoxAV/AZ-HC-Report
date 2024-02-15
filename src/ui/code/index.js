@@ -48,6 +48,13 @@ function listenForIPCEvents() {
         enableNextStep(file.path);
         break;
       }
+
+      case 'file-message': {
+        alert(args.message);
+        window.location.reload();
+        break;
+      }
+
       default: {
         break;
       }
@@ -75,13 +82,27 @@ function listenForIPCEvents() {
         if (args.data.isFirst) {
           window.location.reload();
         } else {
-          initGenerator(args.data.changes, args.data.pastWeek);
+          initGenerator(args.data.changes, args.data.currentWeek, args.data.pastWeek);
           goToStep(2);
         }
         break;
       }
 
       default: {
+        break;
+      }
+    }
+  });
+
+  ipcRenderer.on('error-events', (_, args) => {
+    switch (args.name) {
+      case 'data-extraction': {
+        alert(args.message)
+        break;
+      }
+
+      default: {
+        alert('There was an error. Please try again.');
         break;
       }
     }

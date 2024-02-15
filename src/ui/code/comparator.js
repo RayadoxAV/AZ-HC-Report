@@ -31,7 +31,7 @@ function initComparator(entryData) {
 
     continueButton.innerText = 'Continue';
     continueButton.onclick = () => {
-      ipcRenderer.send('file-events', {name: 'add-entry', data: { entry: entryData.entryToUpload, isFirst: false, changes: result, pastWeek: entryData.pastEntry.week } });
+      ipcRenderer.send('file-events', {name: 'add-entry', data: { entry: entryData.entryToUpload, isFirst: false, changes: result, currentWeek: entryData.entryToUpload.week, pastWeek: entryData.pastEntry.week } });
       // initGenerator();
       // goToStep(2);
     };
@@ -253,10 +253,10 @@ function compare(firstEntry, secondEntry) {
     changedZoners2.push(...downs);
     changedZoners2.push(...ups);
 
-    const currentWeek = dateToWeek(new Date());
+    // const currentWeek = dateToWeek(new Date());
 
     fillFirstDiffView(`HC Report from WK${firstEntry.week}`, generateTableHTML(changedZoners1, 0));
-    fillSecondDiffView(`HC Report from WK${currentWeek}`, generateTableHTML(changedZoners2, 1));
+    fillSecondDiffView(`HC Report from WK${secondEntry.week}`, generateTableHTML(changedZoners2, 1));
     return [changedZoners1, changedZoners2];
     // const sameEmployees = [];
 
@@ -624,7 +624,6 @@ function generateTableHTML(zoners, diffEditorId) {
     }
 
     tableHTML += '</tr>';
-    console.log(tableHTML);
   }
 
 
