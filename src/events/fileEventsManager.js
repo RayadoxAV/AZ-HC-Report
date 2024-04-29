@@ -37,7 +37,10 @@ class FileManager {
       case 'add-entry': {
         // TODO: RESTORE THIS
         await FileManager.addEntryToDb(args.data.entry);
-        BrowserWindow.getAllWindows()[0].webContents.send('data-events', { name: 'entry-uploaded', data: { isFirst: args.data.isFirst, changes: args.data.changes, currentWeek: args.data.currentWeek, pastWeek: args.data.pastWeek } });
+
+        if (args.data.isFirst) {
+          BrowserWindow.getAllWindows()[0].webContents.send('data-events', { name: 'entry-uploaded', data: { isFirst: args.data.isFirst, changes: args.data.changes, currentWeek: args.data.currentWeek, pastWeek: args.data.pastWeek } });
+        }
 
         break;
       }
@@ -48,6 +51,48 @@ class FileManager {
         shell.openPath(`${FileManager.dbFolder}\\${args.data.fileName}`);
         // shell.openExternal('https://autozone1com.sharepoint.com/:x:/r/sites/Merch-Leadership/SharedDocuments/Unix - CC - Anniversaries - Hibrido/CC and Anniversaries - Merch.xlsx')
         shell.openExternal('https://autozone1com.sharepoint.com/:x:/r/sites/Merch-Leadership/_layouts/15/Doc.aspx?sourcedoc=%7BEA5492BD-7739-47EE-942C-4E878B2FFFA3%7D&file=CC%20and%20Anniversaries%20-%20Merch.xlsx&wdLOR=c750BDEB2-7C3F-45DD-828B-F7D91382FEC1&fromShare=true&action=default&mobileredirect=true');
+        break;
+      }
+
+      case 'read-entries': {
+        const entries = await FileManager.getAllEntries();
+        BrowserWindow.getAllWindows()[0].webContents.send('data-events', { name: 'entries-read', data: entries });
+        break;
+      }
+
+      case 'delete-entry': {
+
+        const entries = await FileManager.getAllEntries();
+
+        let entryIndex = -1;
+
+        for (let i = 0; i < entries.length; i++) {
+          const entry = entries[i];
+
+          if (entry.id === args.data.id) {
+            entryIndex = i;
+            break;
+          }
+        }
+
+        if (entryIndex !== -1) {
+          entries.splice(entryIndex, 1);
+        }
+
+        try {
+          const dbString = await readFile(FileManager.dbPath, { encoding: 'utf-8' });
+          const db = JSON.parse(dbString);
+  
+          db.entries = [...entries];
+          
+          await writeFile(FileManager.dbPath, JSON.stringify(db), { encoding: 'utf-8' });
+          
+          BrowserWindow.getAllWindows()[0].webContents.send('data-events', { name: 'entry-deleted', data: { deleted: true, id: args.data.id } });
+
+        } catch (error) {
+          console.log(error);
+        }
+
         break;
       }
       
@@ -175,6 +220,8 @@ class FileManager {
     try {
       const dbString = await readFile(FileManager.dbPath, { encoding: 'utf-8' });
       const db = JSON.parse(dbString);
+      
+      entry.id = util.generateId(16);
 
       db.entries.push(entry);
 
@@ -190,6 +237,23 @@ class FileManager {
 
   static async writeFileContents(contents, name) {
     await writeFile(`${this.dbFolder}\\${name}`, contents, { encoding: 'utf-8' });
+  }
+
+  static async deleteEntryById(id) {
+    console.log(id);
+  }
+
+  static async getAllEntries() {
+    try {
+      const dbString = await readFile(FileManager.dbPath, { encoding: 'utf-8' });
+      const db = JSON.parse(dbString);
+
+      return db.entries;
+    } catch (error) {
+      console.log(error);
+    }
+
+    return [];
   }
 }
 

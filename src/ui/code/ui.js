@@ -3,6 +3,9 @@
 const minimizeButton = document.getElementById('titlebar-minimize-button');
 const maximizeButton = document.getElementById('titlebar-maximize-button');
 const closeButton = document.getElementById('titlebar-close-button');
+const viewEntriesButton = document.getElementById('view-entries');
+const entryViewer = document.getElementById('entry-viewer');
+const mainContainer = document.getElementById('main-container');
 
 let lastSelectedIndex = -1;
 
@@ -49,6 +52,17 @@ function init() {
   closeButton.addEventListener('click', () => {
     ipcRenderer.send('window-events', { name: 'close', window: 'Main' });
   });
+
+  viewEntriesButton.addEventListener('click', () => {
+    toggleEntryView();
+  });
+}
+
+
+function toggleEntryView() {
+  entryViewer.classList.toggle('active');
+  mainContainer.classList.toggle('visible');
+  hideSearch();
 }
 
 init();

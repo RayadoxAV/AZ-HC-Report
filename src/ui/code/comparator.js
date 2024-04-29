@@ -31,7 +31,13 @@ function initComparator(entryData) {
 
     continueButton.innerText = 'Continue';
     continueButton.onclick = () => {
-      ipcRenderer.send('file-events', {name: 'add-entry', data: { entry: entryData.entryToUpload, isFirst: false, changes: result, currentWeek: entryData.entryToUpload.week, pastWeek: entryData.pastEntry.week } });
+
+      // initGenerator();
+
+      initGenerator(result, entryData.entryToUpload.week, entryData.pastEntry.week, entryData.entryToUpload);
+      goToStep(2);
+
+      // ipcRenderer.send('file-events', {name: 'add-entry', data: { entry: entryData.entryToUpload, isFirst: false, changes: result, currentWeek: entryData.entryToUpload.week, pastWeek: entryData.pastEntry.week } });
       // initGenerator();
       // goToStep(2);
     };
@@ -152,7 +158,7 @@ function compare(firstEntry, secondEntry) {
   const firstZoners = firstEntry.zoners;
   const secondZoners = secondEntry.zoners;
 
-  let matchedZoners = 0;
+ /*  let matchedZoners = 0;
 
   for (let i = 0; i < firstZoners.length; i++) {
     const zoner = firstZoners[i];
@@ -167,7 +173,7 @@ function compare(firstEntry, secondEntry) {
   }
 
   if (matchedZoners === firstZoners.length) {
-
+    console.log('?');
     const changedFolks = [];
 
     for (let i = 0; i < firstZoners.length; i++) {
@@ -215,8 +221,9 @@ function compare(firstEntry, secondEntry) {
       noChangeDisplay.style.display = 'flex';
     }
 
-    return [changedZoners1, changedZoners2];
-  } else {
+    return [changedZoners1, changedZoners2]; */
+
+  // } else { TODO: AA
     const [matches, downs, ups] = setTheory(firstZoners, secondZoners);
 
     // For the matches we have to compare them to see if they have changes.
@@ -252,6 +259,8 @@ function compare(firstEntry, secondEntry) {
 
     changedZoners2.push(...downs);
     changedZoners2.push(...ups);
+
+    console.log(ups);
 
     // const currentWeek = dateToWeek(new Date());
 
@@ -352,7 +361,7 @@ function compare(firstEntry, secondEntry) {
     // fillSecondDiffView(`HC Report from WK${currentWeek}`, changedZoners2, 'after');
 
 
-  }
+  // } TODO: AAA
 }
 
 function getChangedFieldsArray(zoner, zoner2) {
@@ -620,7 +629,6 @@ function generateTableHTML(zoners, diffEditorId) {
         <td>${zoner.grade}</td>
         <td>${zoner.supervisorId}</td>
         <td>${zoner.supervisorName}</td>`;
-      //   </tr>`;
     }
 
     tableHTML += '</tr>';

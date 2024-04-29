@@ -23,7 +23,23 @@ function init() {
     }
   });
 
+
   listenForIPCEvents();
+  ipcRenderer.send('file-events', { name: 'read-entries' });
+
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'f' && event.ctrlKey) {
+      toggleSearch();
+      
+    }
+  });
+
+  window.data = {
+    entries: [],
+    isSearchBoxVisible: false,
+    selectedEntryIndex: -1
+  };  
+
 }
 
 init();
@@ -86,6 +102,34 @@ function listenForIPCEvents() {
           goToStep(2);
         }
         break;
+      }
+
+      case 'entries-read': {
+        // window.data.entries = args.data;
+        
+
+        args.data.sort((a, b) => {
+          if (a.week < b.week) {
+            return 1;
+          }
+          if (a.week > b.week) {
+            return -1;
+          }
+          return 0;
+        });
+
+        window.data.entries = args.data;
+
+        initEntryViewer();
+        break;
+      }
+
+      case 'entry-deleted': {
+        if (args.data.deleted) {
+          alert('Entry deleted successfully');
+        } else {
+          alert('Error while deleting entry');
+        }
       }
 
       default: {

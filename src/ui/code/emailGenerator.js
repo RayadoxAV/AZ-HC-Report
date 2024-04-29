@@ -1,5 +1,8 @@
 
-function initGenerator(changes, currentEntryWeek, pastEntryWeek) {
+function initGenerator(changes, currentEntryWeek, pastEntryWeek, entryUpload) {
+
+
+
   const generateButton = document.getElementById('generate-email-button');
 
   generateButton.onclick = () => {
@@ -14,13 +17,13 @@ function initGenerator(changes, currentEntryWeek, pastEntryWeek) {
         }
       });
     });
-    console.log(hasChanged);
-    console.log(currentEntryWeek);
+
     const emailString = generateEmail(changesObject, currentEntryWeek, pastEntryWeek, hasChanged);
 
     // TODO: Check for no changes at all.
 
     ipcRenderer.send('file-events', { name: 'file-write', data: { contents: emailString, fileName: 'hc-report.eml' } });
+    ipcRenderer.send('file-events', { name: 'add-entry' , data: { isFirst: false, entry: entryUpload }});
   };
 }
 
@@ -69,11 +72,18 @@ function generateChangesByCategory(changes) {
     const changedZoner2 = changedZoners2[i];
 
     if (changedZoner2.isOld) {
-      changesObject.down[changedZoner2.manager].push({ before: changedZoner1, after: changedZoner2 });
+      if (changesObject.down[changedZoner2.manager]) {
+        changesObject.down[changedZoner2.manager].push({ before: changedZoner1, after: changedZoner2 });
+      }
+
     } else if (changedZoner2.isNew) {
-      changesObject.up[changedZoner2.manager].push({ before: changedZoner1, after: changedZoner2 });
+      if (changesObject.up[changedZoner2.manager]) {
+        changesObject.up[changedZoner2.manager].push({ before: changedZoner1, after: changedZoner2 });
+      }
     } else {
-      changesObject.changes[changedZoner2.manager].push({ before: changedZoner1, after: changedZoner2 });
+      if (changesObject.changes[changedZoner2.manager]) {
+        changesObject.changes[changedZoner2.manager].push({ before: changedZoner1, after: changedZoner2 });
+      }
     }
   }
 
