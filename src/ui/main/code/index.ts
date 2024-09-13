@@ -4,7 +4,7 @@ import NavRail from './ui/nav-rail';
 import Comparator from './ui/comparator';
 import EventManager from './data/eventManager';
 import { ApplicationState } from './data/types';
-import StateManager from './data/stateManager';
+// import StateManager from './data/stateManager';
 // import Logger from './util/logger';
 
 declare global {
@@ -19,10 +19,28 @@ declare global {
 init();
 
 function init(): void {
-  const stateManager = new StateManager();
-  stateManager.initializeApplicationState();
-  initializeComponents();
+  initializeApplicationState();
   new EventManager().manageMainEvents();
+  initializeComponents();
+}
+
+function initializeApplicationState() {
+  if (window.applicationState === undefined) {
+    const initialState: ApplicationState = {
+      comparator: {
+        currentStep: 0,
+        filePath: '',
+        lastUploadedEntry: undefined,
+        isFirstEntry: false,
+        entries: []
+      },
+      debug: {
+        logging: true
+      }
+    };
+
+    window.applicationState = initialState;
+  }
 }
 
 function initializeComponents(): void {
@@ -31,6 +49,8 @@ function initializeComponents(): void {
 
   new TitleBar();
 
-  const comparator = new Comparator();
-  comparator.goToComparatorStep(window.applicationState.comparator.currentStep);
+  
+  // comparator.goToComparatorStep(window.applicationState.comparator.currentStep);
+
+  EventManager.globalEventsEmitter.emit('global-events', { name: 'comparator-init' });
 }

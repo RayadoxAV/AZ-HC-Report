@@ -1,6 +1,7 @@
 import EventManager from '../data/eventManager';
-import StateManager from '../data/stateManager';
+import { Entry } from '../data/types';
 import ClientLogger, { LogSeverity } from '../util/clientLogger';
+import Util from '../util/util';
 // import StateManager from '../data/stateManager';
 
 
@@ -14,11 +15,22 @@ class Comparator {
   private progressIndicatorElement: HTMLElement;
 
   private uploadButton: HTMLButtonElement;
+  private compareContinueButton: HTMLButtonElement;
 
   private currentStep: number = -1;
 
+  // NOTE: Only adding this because I need to remove all listeners later.
+  listeners = {
+    navigationButtonListener: (event: PointerEvent) => {
+      console.log('hola');
+      const target = event.target as HTMLButtonElement;
+      this.goToComparatorStep(Number.parseInt(target.getAttribute('data-index')));
+    },
+    uploadFileListener: this.uploadFile
+  }
+
   constructor() {
-    this.init();
+    // this.init();
   }
 
   //#region Init
@@ -26,23 +38,27 @@ class Comparator {
     this.element = document.getElementById('comparator');
     this.progressIndicatorElement = this.element.querySelector('div.progress-indicator');
     this.uploadButton = document.getElementById('upload-file-button') as HTMLButtonElement;
+    this.compareContinueButton = document.getElementById('compare-continue') as HTMLButtonElement;
+
     this.listenForEvents();
+    this.goToComparatorStep(0);
   }
   //#endregion
 
   //#region Event handling
   public listenForEvents(): void {
+    console.log('ahoaa');
     const buttons = this.progressIndicatorElement.querySelectorAll('button');
     buttons.forEach((button: HTMLButtonElement) => {
-      button.addEventListener('click', () => {
-        this.goToComparatorStep(Number.parseInt(button.getAttribute('data-index')));
-      });
+      button.addEventListener('click', this.listeners.navigationButtonListener);
     });
 
     const uploadArea = this.element.querySelector('div#upload-area') as HTMLElement;
     this.registerUploadAreaEvents(uploadArea);
 
     this.uploadButton.addEventListener('click', this.uploadFile);
+    this.continueComparison = this.continueComparison.bind(this);
+    this.compareContinueButton.addEventListener('click', this.continueComparison);
 
     EventManager.fileEventsEmitter.addListener('comparator-events', (event: { name: string, value: any }) => {
       switch (event.name) {
@@ -58,12 +74,11 @@ class Comparator {
       }
     });
 
-    EventManager.dataEventsEmmmiter.addListener('comparator-events', (event: { name: string, value: any })=> {
+    EventManager.dataEventsEmmmiter.addListener('comparator-events', (event: { name: string, value: any }) => {
       switch (event.name) {
         case 'entry-created': {
-          const { data: entry, isFirstEntry } = event.value;
-          if (isFirstEntry) {
-            StateManager.setStateProperty('comparator.currentStep', 1);
+          if (window.applicationState.comparator.isFirstEntry) {
+            EventManager.dataEventsEmmmiter.emit('comparator-events', { name: 'load-compare-view', value: 1 });
             return;
           }
           break;
@@ -76,7 +91,14 @@ class Comparator {
         }
 
         case 'load-compare-view': {
+          console.log('aaa');
           const nextStep = event.value;
+          if (nextStep === 1) {
+            if (window.applicationState.comparator.isFirstEntry) {
+              this.showSingleEntry(window.applicationState.comparator.lastUploadedEntry);
+            }
+          }
+
           this.goToComparatorStep(nextStep);
           break;
         }
@@ -206,7 +228,7 @@ class Comparator {
 
   private populateEntrySelects(entries: any[]) {
     let optionsHTML = '<option value="">Select an entry</option>';
-    
+
     for (let i = 0; i < entries.length; i++) {
       const currentEntry = entries[i];
       optionsHTML += `<option value="${currentEntry.week}-${currentEntry.fiscalYear}">WK${currentEntry.week} - FY${currentEntry.fiscalYear}</option>`;
@@ -223,11 +245,108 @@ class Comparator {
 
   //#region Upload file
   private uploadFile(): void {
-    // console.log(window.applicationState.comparator.filePath);
     window.dataBridge.sendEvent('extract-file-information', { type: 0, data: window.applicationState.comparator.filePath });
   }
   //#endregion
 
+  //#region Entry display
+  private showSingleEntry(entry: Entry): void {
+    ClientLogger.log('Showing single entry', LogSeverity.INFO);
+    const tablesContainer = this.element.querySelector('div#tables-container');
+    tablesContainer.classList.remove('double-table-view');
+    tablesContainer.classList.add('single-table-view');
+
+    const secondTableContainer = this.element.querySelector('div#second-table-container') as HTMLDivElement;
+    secondTableContainer.style.display = 'none';
+
+    const zoners = entry.zoners;
+
+    let tableBodyHTML = '';
+
+    for (let i = 0; i < zoners.length; i++) {
+      const zoner = zoners[i];
+      tableBodyHTML +=
+        `<tr>
+        <td>${zoner.ignitionId}</td>
+        <td>${zoner.cc}</td>
+        <td>${zoner.name}</td>
+        <td>${Util.getFormattedDate(zoner.hireDate)}</td>
+        <td>${zoner.jobCode}</td>
+        <td>${zoner.position}</td>
+        <td>${zoner.grade}</td>
+        <td>${zoner.supervisorId}</td>
+        <td>${zoner.supervisorName}</td>
+      </tr>`;
+    }
+
+    const firstTableBody = this.element.querySelector('table#first-table > tbody');
+    firstTableBody.innerHTML = tableBodyHTML;
+    this.compareContinueButton.innerText = 'Save file';
+  }
+  
+  private showBothEntries(firstEntry: Entry, secondEntry: Entry): void {
+    console.log('TODO: Implement', firstEntry, secondEntry);
+  }
+
+  private hideEntries(): void {
+    const tablesContainer = this.element.querySelector('div#tables-container');
+    tablesContainer.classList.remove('single-table-view');
+    tablesContainer.classList.add('double-table-view');
+    const secondTableContainer = this.element.querySelector('div#second-table-container') as HTMLDivElement;
+    secondTableContainer.style.display = 'unset';
+
+    const firstTableBody = this.element.querySelector('table#first-table > tbody');
+    firstTableBody.innerHTML = '<td colspan="9" style="text-align: center;">No entry selected for visualization</td>';
+    const secondTableBody = this.element.querySelector('table#second-table > tbody');
+    secondTableBody.innerHTML = '<td colspan="9" style="text-align: center;">No entry selected for visualization</td>'
+  }
+
+  //#endregion
+
+  //#region Compare
+  private continueComparison(): void {
+    if (window.applicationState.comparator.isFirstEntry) {
+      console.log('Just save the entry and go to step 1. Reset state');
+      // window.dataBridge('save-entry', { data: window.applicationState.comparator.lastUploadedEntry });
+
+   
+      this.resetComparatorState();
+      this.removeAllListeners();
+      this.resetComparatorUI();
+      this.goToComparatorStep(0);
+
+      EventManager.globalEventsEmitter.emit('global-events', { name: 'comparator-init' });
+    }
+  }
+  //#endregion
+
+  //#region Cleanup
+  private resetComparatorState(): void {
+    window.applicationState.comparator.currentStep = 0;
+    window.applicationState.comparator.filePath = '';
+    window.applicationState.comparator.isFirstEntry = false;
+    window.applicationState.comparator.lastUploadedEntry = undefined;
+
+  }
+
+  private removeAllListeners(): void {
+    /* const buttons = this.progressIndicatorElement.querySelectorAll('button');
+    buttons.forEach((button: HTMLButtonElement) => {
+      button.removeEventListener('click', this.listeners.navigationButtonListener);
+    });
+    
+    this.uploadButton.removeEventListener('click', this.listeners.uploadFileListener); */
+  }
+
+  private resetComparatorUI(): void {
+    this.hideEntries();
+    this.uploadButton.style.display = 'none';
+    this.compareContinueButton.innerText = 'Continue';
+    const fileNameContainer = document.getElementById('file-name-container');
+    fileNameContainer.innerHTML = 'Click this area to continue';
+  }
+
+  //#endregion
 }
 
 export default Comparator;

@@ -13,7 +13,6 @@ export async function manageFileEvents(_: any, ...args: any[]): Promise<void> {
     case 'file-dialog-open': {
       const windowName = eventArgs as string;
       openFileDialog(windowName);
-
       break;
     }
   }

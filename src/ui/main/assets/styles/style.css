@@ -396,11 +396,18 @@ div.comparator {
     > div.tables-container {
       display: grid;
       gap: 0.5rem;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
 
       > div.table-container {
         overflow: auto;
       }
+    }
+
+    > div.tables-container.single-table-view {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    > div.tables-container.double-table-view {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     button.compare-continue {

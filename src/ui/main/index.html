@@ -37,7 +37,7 @@
       </div>
       <div class="item" data-index="2">
         <span class="icon" data-icon="chart"></span>
-        <span class="title">CC Reports</span>
+        <span class="title">Reports</span>
       </div>
       <div class="item" data-index="3" style="margin-top: auto;">
         <span class="icon" data-icon="settings"></span>
@@ -59,7 +59,7 @@
               <span class="file-icon" data-icon="upload"></span>
               <span id="file-name-container" class="file-name">
                 <span id="inline-file-icon" class="icon" data-icon="file" style="display: none;"></span>
-                <span id="file-name">Click this area or drag a file to continue</span>
+                <span id="file-name">Click this area to continue</span>
               </span>
               <button id="upload-file-button" class="upload" type="button" style="display: none;">Continue</button>
             </div>
@@ -79,9 +79,9 @@
           </div>
         </div>
         <div id="comparator-compare" class="comparator-content" data-index="1">
-          <div class="tables-container">
-            <div class="table-container">
-              <table class="styled">
+          <div id="tables-container" class="tables-container double-table-view">
+            <div id="first-table-container" class="table-container">
+              <table id="first-table" class="styled">
                 <thead>
                   <tr>
                     <th>Ignition Id</th>
@@ -97,21 +97,13 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td>11110000</td>
-                    <td>8288</td>
-                    <td>Christian Roberto Alvarado Hernandez</td>
-                    <td>08/28/2024</td>
-                    <td>SD250</td>
-                    <td>CONTENT SUPPORT ANALYST SR</td>
-                    <td>12</td>
-                    <td>hola</td>
-                    <td>Francisco Javier Ortiz Rivas</td>
+                    <td colspan="9" style="text-align: center;">No entry selected for visualization</td>
                   </tr>
                 </tbody>
               </table>
             </div>
-            <div class="table-container">
-              <table class="styled">
+            <div id="second-table-container" class="table-container">
+              <table id="second-table" class="styled">
                 <thead>
                   <tr>
                     <th>Ignition Id</th>
@@ -127,21 +119,13 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td>11110000</td>
-                    <td>8288</td>
-                    <td>Raymundo Paz Valverde</td>
-                    <td>08/28/2024</td>
-                    <td>SD250</td>
-                    <td>CONTENT SUPPORT ANALYST SR</td>
-                    <td>12</td>
-                    <td>hola</td>
-                    <td>Francisco Javier Ortiz Rivas</td>
+                    <td colspan="9" style="text-align: center;">No entry selected for visualization</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
-          <button class="compare-continue">Continue</button>
+          <button id="compare-continue" class="compare-continue">Continue</button>
         </div>
         <div id="comparator-generate" class="comparator-content" data-index="2">Gnerate</div>
       </div>

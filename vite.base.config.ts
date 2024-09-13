@@ -22,6 +22,9 @@ export function getBuildConfig(env: ConfigEnv<'build'>): UserConfig {
       minify: command === 'build',
     },
     clearScreen: false,
+    optimizeDeps: {
+      exclude: ['events']
+    }
   };
 }
 

@@ -34,6 +34,10 @@ class Util {
   
     return proxy;
   }
+
+  public static getFormattedDate(date: Date): string {
+    return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+  }
 }
 
 export default Util;
