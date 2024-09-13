@@ -1,5 +1,18 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, Menu, screen } from 'electron';
 import path from 'path';
+
+import 'dotenv/config';
+import ServerLogger, { LogSeverity } from './util/serverLogger';
+import DBManager from './data/database/dbManager';
+import { manageEvents } from './ui/events/ipcEvents';
+
+function preinit(): void {
+  DBManager.initializeDatabase();
+}
+
+preinit();
+
+Menu.setApplicationMenu(null);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -7,10 +20,22 @@ if (require('electron-squirrel-startup')) {
 }
 
 const createWindow = () => {
+  ServerLogger.log('Creating window', LogSeverity.INFO);
+
+  const primaryDisplay = screen.getPrimaryDisplay();
+
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1300, // TODO: Remove this
+    height: 700,
+    minWidth: 600,
+    minHeight: 480,
+    title: 'Headcount Report',
+    frame: false,
+    x: 3840, // TODO: Remove this
+    y: 0, // TODO: Remove this
+    // x: primaryDisplay.bounds.x, // NOTE: Uncomment this
+    // y: primaryDisplay.bounds.y,// NOTE: Uncomment this
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -18,18 +43,44 @@ const createWindow = () => {
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+    ServerLogger.log('Dev environment. Loading URL', LogSeverity.INFO);
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
+    ServerLogger.log('Prod environment. Loading HTML File', LogSeverity.INFO);
     mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
-
+  mainWindow.maximize();
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools({ mode: 'right' });
+
+  // TODO: Remove this!
+  {
+    mainWindow.webContents.on('devtools-opened', () => {
+      const css = `
+      :root {
+          --sys-color-base: var(--ref-palette-neutral100);
+          --source-code-font-family: consolas;
+          --source-code-font-size: 12px;
+          --monospace-font-family: consolas;
+          --monospace-font-size: 12px;
+          --default-font-family: system-ui, sans-serif;
+          --default-font-size: 12px;
+      }
+      .-theme-with-dark-background {
+          --sys-color-base: var(--ref-palette-secondary25);
+      }
+      body {
+          --default-font-family: system-ui,sans-serif;
+      }`;
+      mainWindow.webContents.devToolsWebContents.executeJavaScript(`
+      const overriddenStyle = document.createElement('style');
+      overriddenStyle.innerHTML = '${css.replaceAll('\n', ' ')}';
+      document.body.append(overriddenStyle);
+      document.body.classList.remove('platform-windows');`);
+    });
+  }
 };
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.on('ready', createWindow);
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -49,5 +100,4 @@ app.on('activate', () => {
   }
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+manageEvents();

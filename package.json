@@ -1,11 +1,11 @@
 {
-  "name": "az-hc-tool",
-  "productName": "az-hc-tool",
+  "name": "az-hc-report",
+  "productName": "az-hc-report",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
   "scripts": {
-    "start": "electron-forge start",
+    "dev": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
@@ -37,6 +37,11 @@
   },
   "license": "MIT",
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.1"
+    "@types/better-sqlite3": "^7.6.11",
+    "better-sqlite3": "^11.3.0",
+    "dotenv": "^16.4.5",
+    "electron-squirrel-startup": "^1.0.1",
+    "events": "^3.3.0",
+    "exceljs": "^4.4.0"
   }
 }

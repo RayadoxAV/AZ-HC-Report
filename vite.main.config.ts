@@ -24,6 +24,9 @@ export default defineConfig((env) => {
       // Load the Node.js entry.
       mainFields: ['module', 'jsnext:main', 'jsnext'],
     },
+    optimizeDeps: {
+      exclude: ['events']
+    }
   };
 
   return mergeConfig(getBuildConfig(forgeEnv), config);

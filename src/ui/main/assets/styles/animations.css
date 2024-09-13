@@ -1,0 +1,144 @@
+/* 
+  Raymundo Paz
+  September 2024
+*/
+
+.scale-in {
+  animation-name: scaleIn;
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0, 1);
+  animation-fill-mode: forwards;
+}
+
+@keyframes scaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(110%)
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(100%);
+  }
+}
+
+.fade-in-up {
+  animation-name: fadeInUp;
+  animation-duration: 200ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0, 1);
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeInUp {
+  0% {
+    transform: translateY(4rem);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0rem);
+    opacity: 1;
+  }
+}
+
+.fade-in-x-forwards {
+  animation-name: fadeInXForwards;
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0, 1);
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeInXForwards {
+  0% {
+    transform: translateX(6rem);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateX(0rem);
+    opacity: 1;
+  }
+}
+
+.fade-in-x-backwards {
+  animation-name: fadeInXBackwards;
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0, 1);
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeInXBackwards {
+  0% {
+    opacity: 0;
+    transform: translateX(-6rem);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0rem);
+  }
+}
+
+.fade-out-x-backwards {
+  animation-name: fadeOutXBackwards;
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0, 1);
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeOutXBackwards {
+  0% {
+    opacity: 1;
+    transform: translateX(0rem);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(-6rem);
+    
+  }
+}
+
+.fade-out-x-forwards {
+  animation-name: fadeOutXForwards;
+  animation-duration: 300ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0, 1);
+  animation-fill-mode: forwards;
+}
+
+@keyframes fadeOutXForwards {
+  0% {
+    opacity: 1;
+    transform: translateX(0rem);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateX(6rem);
+  }
+}
+
+.shrink-deshrink {
+  animation-name: shrinkDeshrink;
+  animation-duration: 200ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0, 1);
+  animation-fill-mode: forwards;
+}
+
+@keyframes shrinkDeshrink {
+  0% {
+    transform: scaleX(100%);
+  }
+
+  30% {
+    transform: scaleX(50%);
+  }
+
+  100% {
+    transform: scaleX(100%);
+  }
+}
