@@ -21,10 +21,7 @@ export function getBuildConfig(env: ConfigEnv<'build'>): UserConfig {
       watch: command === 'serve' ? {} : null,
       minify: command === 'build',
     },
-    clearScreen: false,
-    optimizeDeps: {
-      exclude: ['events']
-    }
+    clearScreen: false
   };
 }
 

@@ -41,7 +41,6 @@
     "better-sqlite3": "^11.3.0",
     "dotenv": "^16.4.5",
     "electron-squirrel-startup": "^1.0.1",
-    "events": "^3.3.0",
     "exceljs": "^4.4.0"
   }
 }
