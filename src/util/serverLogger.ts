@@ -1,3 +1,8 @@
+/* 
+  Raymundo Paz
+  September 2024
+*/
+
 export enum LogSeverity {
   INFO,
   SUCCESS,

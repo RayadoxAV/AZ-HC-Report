@@ -176,7 +176,7 @@ class DBManager {
     return undefined;
   }
 
-  public getTransformedEntryByWKYear(week: number, year: number) {
+  public getTransformedEntryByWKYear(week: number, year: number): TransformedEntry {
     const selectStatement = DBManager.instance.database.prepare('SELECT week_entries.id, week, year, a.id, a.ignition_id, a.cc, a.name, a.hire_date, a.job_code, a.position, a.grade, a.supervisor_id, a.supervisor_name, a.manager FROM week_entries LEFT JOIN autozoners AS a ON week_entries.zoner_id = a.id WHERE week = ? AND year = ?;');
     const resultSet = selectStatement.all(week, year);
 
@@ -186,10 +186,10 @@ class DBManager {
       const currentRow = resultSet[i] as any;
       const zoner: AutoZoner = {
         id: currentRow.id,
-        ignitionId: currentRow.ignition_id,
+        ignitionId: `${currentRow.ignition_id}`,
         cc: currentRow.cc,
         name: currentRow.name,
-        hireDate: currentRow.hire_date,
+        hireDate: new Date(currentRow.hire_date),
         jobCode: currentRow.job_code,
         position: currentRow.position,
         grade: currentRow.grade,
@@ -207,6 +207,77 @@ class DBManager {
     };
 
     return transformedEntry;
+  }
+
+  public getLastTransformedEntry(): TransformedEntry {
+    const selectStatement = DBManager.instance.database.prepare('SELECT week_entries.id, week, year, a.id, a.ignition_id, a.cc, a.name, a.hire_date, a.job_code, a.position, a.grade, a.supervisor_id, a.supervisor_name, a.manager FROM week_entries LEFT JOIN autozoners AS a ON week_entries.zoner_id = a.id WHERE week = (SELECT MAX(week) FROM week_entries) AND year = (SELECT MAX(year) FROM week_entries);');
+    const resultSet = selectStatement.all();
+
+    const zoners: AutoZoner[] = [];
+
+    for (let i = 0; i < resultSet.length; i++) {
+      const currentRow = resultSet[i] as any;
+      const zoner: AutoZoner = {
+        id: currentRow.id,
+        ignitionId: `${currentRow.ignition_id}`,
+        cc: currentRow.cc,
+        name: currentRow.name,
+        hireDate: new Date(currentRow.hire_date),
+        jobCode: currentRow.job_code,
+        position: currentRow.position,
+        grade: currentRow.grade,
+        supervisorId: currentRow.supervisor_id,
+        supervisorName: currentRow.supervisor_name,
+        manager: currentRow.manager
+      };
+      zoners.push(zoner);
+    }
+
+    const transformedEntry: TransformedEntry = {
+      week: (resultSet[0] as any).week,
+      fiscalYear: (resultSet[0] as any).year,
+      zoners: [...zoners]
+    };
+
+    return transformedEntry;
+  }
+
+  public getAlTransformedEntries(): TransformedEntry[] {
+    const selectStatement = DBManager.instance.database.prepare('SELECT week_entries.id, week, year, a.id, a.ignition_id, a.cc, a.name, a.hire_date, a.job_code, a.position, a.grade, a.supervisor_id, a.supervisor_name, a.manager FROM week_entries LEFT JOIN autozoners AS a ON week_entries.zoner_id = a.id;');
+    const resultSet = selectStatement.all();
+
+    const entries = new Map<string, TransformedEntry>();
+
+    for (let i = 0; i < resultSet.length; i++) {
+      const currentRow = resultSet[i] as any;
+      
+      // If there is no entry with the same week and year.
+      if (!entries.has(`${currentRow.week}-${currentRow.year}`)) {
+        const transformedEntry: TransformedEntry = {
+          week: currentRow.week,
+          fiscalYear: currentRow.year,
+          zoners: []
+        };
+        entries.set(`${currentRow.week}-${currentRow.year}`, transformedEntry);
+      } else {
+        const zoner: AutoZoner = {
+          id: currentRow.id,
+          ignitionId: `${currentRow.ignition_id}`,
+          cc: currentRow.cc,
+          name: currentRow.name,
+          hireDate: new Date(currentRow.hire_date),
+          jobCode: currentRow.job_code,
+          position: currentRow.position,
+          grade: currentRow.grade,
+          supervisorId: currentRow.supervisor_id,
+          supervisorName: currentRow.supervisor_name,
+          manager: currentRow.manager
+        };
+        entries.get(`${currentRow.week}-${currentRow.year}`).zoners.push(zoner);
+      }
+    }
+
+    return Array.from(entries.values());
   }
 
   public insertAutozoner(autozoner: AutoZoner) {

@@ -34,5 +34,4 @@ export async function manageFileEvents(_: any, ...args: any[]): Promise<void> {
       }
     }
   }
-
 }

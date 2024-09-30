@@ -1,6 +1,7 @@
 import { ConfigEnv, UserConfig, defineConfig } from 'vite';
 import path from 'path';
 import { pluginExposeRenderer } from './vite.base.config';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig((env) => {
   const forgeEnv = env as ConfigEnv<'renderer'>;
@@ -14,7 +15,7 @@ export default defineConfig((env) => {
     build: {
       outDir: `../../../.vite/ui/main_window/${name}`
     },
-    plugins: [pluginExposeRenderer(name)],
+    plugins: [pluginExposeRenderer(name), react()],
     resolve: {
       preserveSymlinks: true
     },

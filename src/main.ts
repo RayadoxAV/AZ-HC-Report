@@ -1,3 +1,8 @@
+/* 
+  Raymundo Paz
+  September 2024
+*/
+
 import { app, BrowserWindow, Menu, screen } from 'electron';
 import path from 'path';
 
@@ -28,8 +33,8 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 1300, // TODO: Remove this
     height: 700,
-    minWidth: 600,
-    minHeight: 480,
+    minWidth: 800,
+    minHeight: 600,
     title: 'Headcount Report',
     frame: false,
     x: 3840, // TODO: Remove this
@@ -79,6 +84,7 @@ const createWindow = () => {
       document.body.classList.remove('platform-windows');`);
     });
   }
+
 };
 
 app.on('ready', createWindow);

@@ -10,6 +10,7 @@ import { FuseV1Options, FuseVersion } from '@electron/fuses';
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
+    icon: 'src/img/app-icon'
   },
   rebuildConfig: {},
   makers: [new MakerSquirrel({}), new MakerZIP({}, ['darwin']), new MakerRpm({}), new MakerDeb({})],
@@ -32,10 +33,6 @@ const config: ForgeConfig = {
         {
           name: 'main_window',
           config: 'vite.main_window.config.ts',
-        },
-        {
-          name: 'settings_window',
-          config: 'vite.settings_window.config.ts'
         },
         {
           name: 'help_window',

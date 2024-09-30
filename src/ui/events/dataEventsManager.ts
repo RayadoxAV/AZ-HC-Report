@@ -4,22 +4,25 @@
 */
 
 import { Workbook, Worksheet } from 'exceljs';
-import { existsSync } from 'fs';
+import * as fs from 'fs';
+import { promisify } from 'util';
+const writeFile = promisify(fs.writeFile);
 
 import ServerLogger, { LogSeverity } from '../../util/serverLogger';
 import TransformedEntry from '../../data/models/entry';
-import { getCurrentFiscalYear, getDateForCell } from '../../util/util';
+import { fillManagers, getCurrentFiscalYear, getDateForCell } from '../../util/util';
 import { AutoZoner } from '../../data/models/autozoner';
 import DBManager from '../../data/database/dbManager';
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, shell } from 'electron';
+
 
 export async function manageDataEvents(_: any, ...args: any[]): Promise<void> {
   const { event, args: eventArgs } = args[0];
+  const window = BrowserWindow.getAllWindows()[0];
 
   switch (event) {
     case 'extract-file-information': {
       if (eventArgs.type === 0) {
-        const window = BrowserWindow.getAllWindows()[0];
 
         const entry: TransformedEntry = await extractDataFromFile(eventArgs.data);
         if (!entry) {
@@ -43,7 +46,44 @@ export async function manageDataEvents(_: any, ...args: any[]): Promise<void> {
       break;
     }
 
+    case 'request-entry': {
+
+      const entryNumber: number = eventArgs.entryNumber;
+      const param: string = eventArgs.param;
+
+      if (param === 'last') {
+        const requestedEntry = DBManager.instance.getLastTransformedEntry();
+
+        window.webContents.send('data-events', { name: 'entry-provided', value: { entryNumber, entry: requestedEntry } });
+      }
+
+      break;
+    }
+
+    case 'save-entry': {
+      const entry: TransformedEntry = eventArgs.data.entry;
+      const isFirstEntry: boolean = eventArgs.data.isFirstEntry;
+      DBManager.instance.insertEntry(entry);
+      window.webContents.send('data-events', { name: 'entry-saved', value: { isFirstEntry } });
+      break;
+    }
+
+    case 'write-email-file': {
+      await writeFile('C:\\users\\rpaz\\desktop\\test.eml', eventArgs.data, { encoding: 'utf-8' });
+      shell.openPath('C:\\users\\rpaz\\desktop\\test.eml');
+      shell.openExternal('https://autozone1com.sharepoint.com/:x:/r/sites/Merch-Leadership/_layouts/15/Doc.aspx?sourcedoc=%7BEA5492BD-7739-47EE-942C-4E878B2FFFA3%7D&file=CC%20and%20Anniversaries%20-%20Merch.xlsx&wdLOR=c750BDEB2-7C3F-45DD-828B-F7D91382FEC1&fromShare=true&action=default&mobileredirect=true');
+      window.webContents.send('data-events', { name: 'reset-comparator' });
+      break;
+    }
+
+    case 'get-all-entries': {
+      const entries = DBManager.instance.getAlTransformedEntries();
+      window.webContents.send('data-events', { name: 'provide-entries-list', value: { list: entries } });
+      break;
+    }
+
     default: {
+      ServerLogger.log(`Unmanaged event '${event}'`, LogSeverity.WARNING);
       break;
     }
   }
@@ -66,7 +106,7 @@ export async function manageDataEvents(_: any, ...args: any[]): Promise<void> {
 
       const weekCell = sheet['_rows'][0]['_cells'][2].value;
       const week = Number.parseInt(weekCell.split('W')[1]);
-      
+
       const entry: TransformedEntry = new TransformedEntry(week, getCurrentFiscalYear(), generateZoners(sheet));
 
       return entry;
@@ -78,7 +118,7 @@ export async function manageDataEvents(_: any, ...args: any[]): Promise<void> {
 
   async function readExcelFileFromPath(path: string) {
     const workbook = new Workbook();
-    if (!existsSync(path)) {
+    if (!fs.existsSync(path)) {
       // TODO: Send error to UI
       ServerLogger.log(`Could not find path '${path}'. File does not exist.`, LogSeverity.ERROR);
       return;
@@ -104,22 +144,26 @@ export async function manageDataEvents(_: any, ...args: any[]): Promise<void> {
 
       const zoner: AutoZoner = {
         id: undefined,
-        ignitionId: row['_cells'][0].value,
-        cc: row['_cells'][1].value,
+        ignitionId: `${row['_cells'][0].value}`,
+        cc: `${row['_cells'][1].value}`,
         name: row['_cells'][3].value,
         hireDate: getDateForCell(row['_cells'][4].value),
         jobCode: row['_cells'][5].value,
         position: row['_cells'][6].value,
         grade: Number.parseInt(row['_cells'][7].value),
-        supervisorId: row['_cells'][8].value,
+        supervisorId: `${row['_cells'][8].value}`,
         supervisorName: row['_cells'][10].value,
-        manager: 'test'
+        manager: ''
       };
 
       zoners.push(zoner);
     }
+
+    fillManagers(zoners);
+
     return zoners;
   }
+
 
   function readJSONFromPath(path: string) {
     console.log('Plain text', path);

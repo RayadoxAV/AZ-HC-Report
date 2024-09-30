@@ -1,0 +1,48 @@
+/* 
+  Raymundo Paz
+  September 2024
+*/
+
+div.progress-indicator {
+  display: flex;
+  gap: 1rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+  
+  button {
+    width: 6rem;
+    height: 2rem;
+    font-family: 'Roboto', serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    background-color: transparent;
+    border-radius: 0.5rem;
+    border: none;
+    cursor: pointer;
+    transition: all 150ms var(--default-easing);
+    outline: 2px solid transparent;
+    user-select: none;
+
+    &:hover {
+      background-color: var(--primary-accent);
+      color: #ffffff;
+    }
+
+    &:focus-visible {
+      outline-color: var(--primary-accent);
+    }
+  }
+}
+
+div.progress-indicator > span.indicator {
+  position: absolute;
+  display: block;
+  width: 4rem;
+  height: 0.25rem;
+  background-color: var(--primary-accent);
+  border-radius: 0.5rem;
+  left: 1rem;
+  top: 2.5rem;
+  transition: all 150ms var(--deceleration);
+}
