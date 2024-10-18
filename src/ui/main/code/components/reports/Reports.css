@@ -1,0 +1,11 @@
+table {
+  tr {
+    td.below {
+      background-color: #ffc000;
+    }
+
+    td.above {
+      background-color: #ff0000;
+    }
+  }
+}

@@ -12,6 +12,7 @@ import Viewer from './steps/Viewer';
 import Generator from './steps/Generator';
 import { AppContext } from '../../data/ApplicationState';
 
+
 const Comparator: React.FC = () => {
 
   const [appState, setState] = useContext(AppContext);

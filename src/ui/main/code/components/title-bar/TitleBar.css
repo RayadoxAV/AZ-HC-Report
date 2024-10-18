@@ -17,11 +17,13 @@ div.title-bar {
     height: 1.25rem;
     width: 1.25rem;
     background-color: red;
+    user-select: none;
   }
 
   > span.title {
     font-family: 'Roboto', sans-serif;
     font-size: 0.875rem;
+    user-select: none;
   }
 
   > div.window-controls {

@@ -17,7 +17,7 @@ function preinit(): void {
 
 preinit();
 
-Menu.setApplicationMenu(null);
+// Menu.setApplicationMenu(null);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -37,30 +37,28 @@ const createWindow = () => {
     minHeight: 600,
     title: 'Headcount Report',
     frame: false,
-    x: 3840, // TODO: Remove this
-    y: 0, // TODO: Remove this
-    // x: primaryDisplay.bounds.x, // NOTE: Uncomment this
-    // y: primaryDisplay.bounds.y,// NOTE: Uncomment this
+    x: primaryDisplay.bounds.x, // NOTE: Uncomment this
+    y: primaryDisplay.bounds.y,// NOTE: Uncomment this
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
 
-  // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     ServerLogger.log('Dev environment. Loading URL', LogSeverity.INFO);
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
   } else {
     ServerLogger.log('Prod environment. Loading HTML File', LogSeverity.INFO);
-    mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
+    mainWindow.loadFile(path.join(__dirname, `../ui/main_window/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
+
   mainWindow.maximize();
   // Open the DevTools.
-  mainWindow.webContents.openDevTools({ mode: 'right' });
+  // mainWindow.webContents.openDevTools({ mode: 'right' });
 
   // TODO: Remove this!
   {
-    mainWindow.webContents.on('devtools-opened', () => {
+   /*  mainWindow.webContents.on('devtools-opened', () => {
       const css = `
       :root {
           --sys-color-base: var(--ref-palette-neutral100);
@@ -82,7 +80,7 @@ const createWindow = () => {
       overriddenStyle.innerHTML = '${css.replaceAll('\n', ' ')}';
       document.body.append(overriddenStyle);
       document.body.classList.remove('platform-windows');`);
-    });
+    }); */
   }
 
 };

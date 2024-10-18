@@ -1,3 +1,8 @@
+/* 
+  Raymundo Paz
+  October 2024
+*/
+
 import { AutoZoner } from './autozoner';
 
 class TransformedEntry {

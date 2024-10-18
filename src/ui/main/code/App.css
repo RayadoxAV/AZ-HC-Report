@@ -81,6 +81,7 @@ div.content {
   border-top-left-radius: 1rem;
   padding: 1rem;
   overflow: auto;
+  position: relative;
 }
 
 /* Global inputs */
@@ -95,6 +96,7 @@ select.styled {
   transition: all 200ms var(--default-easing);
   outline: none;
   border: 1px solid transparent;
+  user-select: none;
 
   &:hover {
     background-color: color-mix(in srgb, var(--select-background) 80%, #ffffff 20%);
@@ -229,51 +231,29 @@ span.icon {
 }
 
 span.icon[data-icon="difference"] {
-  background-image: url('assets/icons/difference.svg');
+  background-image: url('$assets/icons/difference.svg');
 }
 
 span.icon[data-icon="table"] {
-  background-image: url('assets/icons/table.svg');
+  background-image: url('$assets/icons/table.svg');
 }
 
 span.icon[data-icon="chart"] {
-  background-image: url('assets/icons/chart.svg');
+  background-image: url('$assets/icons/chart.svg');
 }
 
 span.icon[data-icon="settings"] {
-  background-image: url('assets/icons/settings.svg');
+  background-image: url('$assets/icons/settings.svg');
 }
 
 span.icon[data-icon="upload"] {
-  background-image: url('assets/icons/upload.svg');
+  background-image: url('$assets/icons/upload.svg');
 }
 
 span.icon[data-icon="file"] {
-  background-image: url('assets/icons/file.svg');
+  background-image: url('$assets/icons/file.svg');
 }
 
-/*
-
-span.icon[data-icon="table"] {
-  background-image: url('../icons/table.svg');
+span.icon[data-icon="delete"] {
+  background-image: url('$assets/icons/delete.svg');
 }
-
-span.icon[data-icon="chart"] {
-  background-image: url('../icons/chart.svg');
-}
-
-span.icon[data-icon="file"] {
-  background-image: url('../icons/file.svg');
-}
-
-span.icon[data-icon="settings"] {
-  background-image: url('../icons/settings.svg');
-}
-
-span.file-icon[data-icon="upload"] {
-  background-image: url('../icons/upload.svg');
-}
-
-span.file-icon[data-icon="upload_error"] {
-  background-image: url('../icons/upload_error.svg');
-} */

@@ -98,6 +98,17 @@ class EventManager {
       }
     });
   }
+
+  public static manageInternalWindowEvents(setState: any): void {
+
+    window.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (window.location.href.split('/').pop() === 'entries') {
+        if (event.key.toLowerCase() === 'f' && event.ctrlKey) {
+          setState({ type: 'toggleSearchDialogVisible' });
+        }
+      }
+    });
+  }
 }
 
 export default EventManager;

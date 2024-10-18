@@ -2,6 +2,10 @@ import { createContext, useReducer } from 'react';
 import MainClientLogger, { LogSeverity } from '../util/clientLogger';
 import { AutoZoner, Entry } from './types';
 
+interface MiscState {
+  searchDialogVisible: boolean;
+}
+
 interface ComparatorApplicationState {
   filePath: string;
   fileName: string;
@@ -18,18 +22,27 @@ interface ComparatorApplicationState {
   entryList: Entry[];
 }
 
+interface EntriesApplicationState {
+  selectedEntry: Entry;
+}
+
 interface DebugApplicationState {
   logging: boolean;
 }
 
 interface ApplicationState {
   title: string;
+  misc: MiscState;
   comparator: ComparatorApplicationState;
-  debug: DebugApplicationState
+  entries: EntriesApplicationState;
+  debug: DebugApplicationState;
 }
 
 const initialState: ApplicationState = {
   title: 'Headcount Report',
+  misc: {
+    searchDialogVisible: false
+  },
   comparator: {
     filePath: '',
     fileName: '',
@@ -44,6 +57,9 @@ const initialState: ApplicationState = {
       secondChangedZoners: []
     },
     entryList: []
+  },
+  entries: {
+    selectedEntry: undefined
   },
   debug: {
     logging: true
@@ -107,6 +123,11 @@ const reducer = (state: any, action: any) => {
     case 'setEntryList': {
       const comparator = { ...state.comparator };
       return { ...state, comparator: { ...comparator, entryList: action.list } };
+    }
+
+    case 'toggleSearchDialogVisible': {
+      const misc = { ...state.misc };
+      return { ...state, misc: { ...misc, searchDialogVisible: !misc.searchDialogVisible } };
     }
 
     default: {

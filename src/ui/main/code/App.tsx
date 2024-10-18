@@ -12,6 +12,8 @@ import Comparator from './components/comparator/Comparator';
 import './App.css';
 import EventManager from './data/eventManager';
 import { AppContext } from './data/ApplicationState';
+import Entries from './components/entries/Entries';
+import Reports from './components/reports/Reports';
 
 function App() {
 
@@ -19,6 +21,8 @@ function App() {
 
   useEffect(() => {
     EventManager.manageElectronAPIEvents(setApplicationState);
+    EventManager.manageInternalWindowEvents(setApplicationState);
+    window.dataBridge.sendEvent('get-all-entries');
   }, []);
 
   // test();
@@ -30,13 +34,13 @@ function App() {
       <div className="content" style={{ overflow: 'hidden' }}>
         <Routes>
           <Route path="/" element={<Comparator />} />
-          <Route path="/entries" element={<div>Entries</div>} />
-          <Route path="/reports" element={<div>Reports</div>} />
+          <Route path="/entries" element={<Entries></Entries>} />
+          <Route path="/reports" element={<Reports></Reports>} />
           <Route path="/settings" element={<div>Settings</div>} />
         </Routes>
       </div>
     </>
   );
-}``
+}
 
 export default App;

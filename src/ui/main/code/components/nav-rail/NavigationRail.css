@@ -38,6 +38,7 @@ div.nav-rail {
       font-size: 0.75rem;
       font-weight: 500;
       line-height: 1rem;
+      user-select: none;
     }
 
     &:hover {

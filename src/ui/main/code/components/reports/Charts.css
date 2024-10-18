@@ -1,0 +1,317 @@
+div.reports-container {
+  height: 100%;
+  display: grid;
+  gap: 1rem;
+  overflow: auto;
+  grid-template-columns: 3fr 1.5rem 1fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
+  grid-template-areas: 
+  "chart .   table-1 table-2"
+  "chart .   table-3 table-4"
+  "chart .   table-5 table-5"
+  ".     .   .       .";
+}
+
+div.line-chart-wrapper {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid  var(--separator);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  min-height: 20rem;
+  opacity: 0;
+  grid-area: chart;
+
+  > div.header {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+
+    > div:first-child {
+      display: flex;
+      flex-direction: column;
+
+      > select.chart-title {
+        font-family: 'Roboto', sans-serif;
+        font-size: 1.25rem;
+        font-weight: 600;
+        padding: 0;
+        outline: none;
+        border: none;
+        margin-left: -0.125rem;
+
+        > option {
+          font-size: 0.875rem;
+        }
+      }
+
+      > span.description {
+        font-size: 0.9375rem;
+        font-family: 'Roboto', sans-serif;
+      }
+    }
+
+    > div.select-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+
+      > label {
+        font-family: 'Roboto', sans-serif;
+        font-weight: 500;
+        font-size: 0.875rem;
+      }
+
+      > select {
+        background-color: var(--select-background);
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-family: 'Roboto', sans-serif;
+        font-size: 0.875rem;
+        border: none;
+        height: 1.75;
+        outline: none;
+        min-width: 8rem;
+        transition: all 200ms var(--default-easing);
+
+        &:hover {
+          background-color: color-mix(in srgb, var(--select-background) 80%, #ffffff 20%);
+        }
+      }
+    }
+
+    div.select-group:nth-child(2) {
+      margin-left: auto;
+    }
+
+    div.toggle-button-group {
+
+      button {
+        padding: 0.25rem;
+        font-family: 'Roboto', sans-serif;
+        background-color: var(--select-background);
+        border: none;
+        height: 1.75rem;
+        width: 1.75rem;
+        cursor: pointer;
+        transition: all 150ms var(--default-easing);
+
+        &:hover {
+          background-color: color-mix(in srgb, var(--select-background) 70%, #ffffff 30%);
+        }
+
+        &:active {
+          background-color: color-mix(in srgb, var(--select-background) 80%, var(--darker-mult) 20%);
+        }
+      }
+
+      button:nth-child(1) {
+        border-top-left-radius: 0.25rem;
+        border-bottom-left-radius: 0.25rem;
+      }
+
+      button:last-child {
+        border-top-right-radius: 0.25rem;
+        border-bottom-right-radius: 0.25rem;
+      }
+
+      button.active {
+        background-color: var(--primary-accent);
+        color: #ffffff;
+      }
+    }
+  }
+
+  .chart {
+    align-self: center;
+  }
+}
+
+div.custom-tooltip {
+  background-color: white;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.12), 0px 12px 20px rgba(0, 0, 0, 0.14);
+  display: flex;
+  flex-direction: column;
+  min-width: 8rem;
+
+  > span.label {
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+
+  div.line {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+
+    > span.color-indicator {
+      display: block;
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 0.25rem;
+    }
+
+    > span.title {
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.875rem;
+    }
+
+    > span.value {
+      margin-left: auto;
+      font-family: 'Roboto Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  }
+}
+
+tspan {
+  fill: #09090b;
+  font-family: 'Roboto';
+  font-weight: 500;
+  font-size: 0.8125rem;
+}
+
+line {
+  stroke: #e2e8f080;
+}
+
+
+/* span.recharts-legend-item-text {
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.875rem;
+  font-weight: 500;
+} */
+
+div.custom-legend {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  height: 2rem;
+  align-items: last baseline;
+
+  span.legend {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.25rem;
+
+    i.icon {
+      display: block;
+      width: 0.75rem;
+      height: 0.75rem;
+      border-radius: 0.5rem;
+      background-color: red;
+    }
+
+    span.text {
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.875rem;
+    }
+  }
+}
+
+table.hc-table {
+  border-collapse: separate;
+  border-spacing: 0px;
+  border: 1px solid #8ca9f4;
+  border-radius: 0.25rem;
+
+  th {
+    background-color: #4472c4;
+    color: #ffffff;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    width: 33%;
+  }
+
+  th:first-child {
+    border-top-left-radius: 0.25rem;
+  }
+
+  th:last-child {
+    border-top-right-radius: 0.25rem;
+  }
+
+  tr.secondary-row {
+    th {
+      background-color: #d9e1f2;
+      color: #000000;
+      border-radius: 0rem;
+      border-bottom: 1px solid #8ca9f4;
+    }
+  }
+
+  tbody {
+    tr {
+      td {
+        border-bottom: 1px solid #8ca9f4;
+        font-family: 'Roboto', sans-serif;
+        font-size: 0.8125rem;
+        text-align: center;
+      }
+    }
+
+    tr:first-child {
+      td {
+        font-weight: 500;
+      }
+    }
+
+    tr:last-child {
+      td {
+        border-bottom: none;
+      }
+
+      td:first-child {
+        border-bottom-left-radius: 0.25rem;
+      }
+
+      td:last-child {
+        border-bottom-right-radius: 0.25rem;
+      }
+    }
+
+    tr:hover {
+      td {
+        background-color: var(--table-cell-hover);
+      }
+    }
+  }
+}
+
+/* @media (width <= 960px) {
+  div.reports-container {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(2, 1fr);
+  }
+}
+
+@media (width > 960px) {
+  div.reports-container {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr 1fr 1fr;
+  }
+}
+
+@media (width > 1200px) {
+  div.reports-container {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+}
+
+@media (width > 1560px) {
+  div.reports-container {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+}
+ */

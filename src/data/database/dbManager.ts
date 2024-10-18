@@ -280,7 +280,7 @@ class DBManager {
     return Array.from(entries.values());
   }
 
-  public insertAutozoner(autozoner: AutoZoner) {
+  public insertAutozoner(autozoner: AutoZoner): number {
     const insertStatement = DBManager.instance.database.prepare('INSERT INTO autozoners (ignition_id, cc, name, hire_date, job_code, position, grade, supervisor_id, supervisor_name, manager) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);');
     
     const dateString = `${autozoner.hireDate.getFullYear()}-${autozoner.hireDate.getMonth() + 1}-${autozoner.hireDate.getDate()}`;
@@ -290,13 +290,30 @@ class DBManager {
     return result.lastInsertRowid as number;
   }
 
-  public insertEntry(transformedEntry: TransformedEntry) {
+  public insertEntry(transformedEntry: TransformedEntry): void {
     for (let i = 0; i < transformedEntry.zoners.length; i++) {
       const zoner = transformedEntry.zoners[i];
       const insertedId = DBManager.instance.insertAutozoner(zoner);
 
       const insertStatement = DBManager.instance.database.prepare('INSERT INTO week_entries (week, year, zoner_id) VALUES (?, ?, ?);');
       insertStatement.run(transformedEntry.week, transformedEntry.fiscalYear, insertedId);
+    }
+  }
+
+  public deleteEntryByWeekAndYear(week: number, year: number): void {
+    // Get correct entries, then delete the entry to satisfy the fk delete constraint and then delete the autozoner
+    const selectStatement = DBManager.instance.database.prepare('SELECT * FROM week_entries WHERE week = ? AND year = ?');
+    const result = selectStatement.all(week, year);
+
+    for (let i = 0; i < result.length; i++) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const currentEntry = result[i] as any;
+
+      const deleteEntryStatement = DBManager.instance.database.prepare('DELETE FROM week_entries WHERE id = ?');
+      deleteEntryStatement.run(currentEntry.id);
+
+      const deleteZonerStatement = DBManager.instance.database.prepare('DELETE FROM autozoners WHERE id = ?');
+      deleteZonerStatement.run(currentEntry.zoner_id);
     }
   }
 

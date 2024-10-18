@@ -24,10 +24,6 @@ const Uploader: React.FC<UploaderProps> = ({ active, className }) => {
   const [secondEntryKey, setSecondEntryKey] = useState('');
 
   useEffect(() => {
-    dataBridge.sendEvent('get-all-entries');
-  }, []);
-
-  useEffect(() => {
     setEntryList(appState.comparator.entryList);
   }, [appState.comparator.entryList])
 

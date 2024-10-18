@@ -69,14 +69,22 @@ export async function manageDataEvents(_: any, ...args: any[]): Promise<void> {
     }
 
     case 'write-email-file': {
-      await writeFile('C:\\users\\rpaz\\desktop\\test.eml', eventArgs.data, { encoding: 'utf-8' });
-      shell.openPath('C:\\users\\rpaz\\desktop\\test.eml');
-      shell.openExternal('https://autozone1com.sharepoint.com/:x:/r/sites/Merch-Leadership/_layouts/15/Doc.aspx?sourcedoc=%7BEA5492BD-7739-47EE-942C-4E878B2FFFA3%7D&file=CC%20and%20Anniversaries%20-%20Merch.xlsx&wdLOR=c750BDEB2-7C3F-45DD-828B-F7D91382FEC1&fromShare=true&action=default&mobileredirect=true');
+      await writeFile('C:\\az-hc-report\\hc-report.eml', eventArgs.data, { encoding: 'utf-8' });
+      shell.openPath('C:\\az-hc-report\\hc-report.eml');
+      shell.openExternal('https://autozone1com.sharepoint.com/:x:/r/sites/Merch-Leadership/_layouts/15/Doc.aspx?sourcedoc=%7B823894B3-BFC9-4F58-8DFE-A4B9562E871C%7D&file=CC%20and%20Anniversaries%20-%20Merch%20(New%20HC%20Structure).xlsx&wdOrigin=TEAMS-MAGLEV.p2p_ns.rwc&action=default&mobileredirect=true');
       window.webContents.send('data-events', { name: 'reset-comparator' });
       break;
     }
 
     case 'get-all-entries': {
+      const entries = DBManager.instance.getAlTransformedEntries();
+      window.webContents.send('data-events', { name: 'provide-entries-list', value: { list: entries } });
+      break;
+    }
+
+    case 'delete-entry': {
+      const { week, fiscalYear } = eventArgs.data;
+      DBManager.instance.deleteEntryByWeekAndYear(week, fiscalYear);
       const entries = DBManager.instance.getAlTransformedEntries();
       window.webContents.send('data-events', { name: 'provide-entries-list', value: { list: entries } });
       break;
@@ -104,7 +112,7 @@ export async function manageDataEvents(_: any, ...args: any[]): Promise<void> {
         return;
       }
 
-      const weekCell = sheet['_rows'][0]['_cells'][2].value;
+      const weekCell = sheet['_rows'][0]['_cells'][3].value;
       const week = Number.parseInt(weekCell.split('W')[1]);
 
       const entry: TransformedEntry = new TransformedEntry(week, getCurrentFiscalYear(), generateZoners(sheet));

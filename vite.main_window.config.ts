@@ -1,5 +1,5 @@
 import { ConfigEnv, UserConfig, defineConfig } from 'vite';
-import path from 'path';
+import path, { resolve } from 'path';
 import { pluginExposeRenderer } from './vite.base.config';
 import react from '@vitejs/plugin-react';
 
@@ -17,7 +17,10 @@ export default defineConfig((env) => {
     },
     plugins: [pluginExposeRenderer(name), react()],
     resolve: {
-      preserveSymlinks: true
+      preserveSymlinks: true,
+      alias: {
+        $assets: resolve('./src/ui/main/assets')
+      }
     },
     clearScreen: false,
     experimental: {

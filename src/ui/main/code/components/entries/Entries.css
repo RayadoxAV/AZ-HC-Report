@@ -1,0 +1,101 @@
+/* 
+  Raymundo Paz
+  October 2024
+*/
+
+div.entries {
+  display: grid;
+  grid-template-rows: 2rem minmax(0, 1fr);
+  height: 100%;
+
+  div.header {
+
+    span.title {
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+  }
+  
+  div.body {
+    display: grid;
+    grid-template-columns: 1fr 2.33fr;
+    grid-template-rows: 1fr;
+    gap: 1rem;
+
+    div.entries-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      overflow: auto;
+      scrollbar-gutter: stable;
+
+      div.entry {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr auto;
+        grid-template-areas:
+        "pair-1 pair-2 pair-3 button";
+        border: 1px solid var(--separator);
+        border-radius: 0.5rem;
+        padding: 0.5rem;
+        opacity: 0;
+
+        div.pair {
+          display: flex;
+          flex-direction: column;
+          user-select: none;
+          pointer-events: none;
+
+          span.name {
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.8125rem;
+            font-weight: 400;
+            color: #666666;
+          }
+
+          span.value {
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+          }
+        }
+
+        button {
+          width: 1.75rem;
+          padding: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background-color: #efefef;
+          border: 1px solid var(--separator);
+          border-radius: 0.25rem;
+          cursor: pointer;
+          transition: all 150ms var(--deceleration);
+
+          img {
+            display: block;
+            width: 1.24rem;
+            height: 100%;
+            filter: invert(58%) sepia(0%) saturate(518%) hue-rotate(137deg) brightness(94%) contrast(81%);
+            transition: all 150ms var(--deceleration);
+            pointer-events: none;
+            user-select: none;
+          }
+        }
+
+        button:hover {
+          background-color: #f7d8d6;
+          border: 1px solid color-mix(in srgb, #f7d8d6 90%, #db5450 10%);
+
+          img {
+            filter: invert(46%) sepia(50%) saturate(742%) hue-rotate(314deg) brightness(87%) contrast(96%);
+          }
+        }
+      }
+    }
+
+    div.table-container {
+      overflow: auto;
+    }
+  }
+}

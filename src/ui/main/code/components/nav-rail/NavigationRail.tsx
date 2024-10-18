@@ -3,8 +3,8 @@
   September 2024
 */
 
-import './NavigationRail.css';
 import NavRailItem from './NavRailItem';
+import './NavigationRail.css';
 
 const NavigationRail: React.FC = () => {
   return (

@@ -66,6 +66,7 @@ div.uploader {
         background-color: var(--comparator-file-name-background);
         border-radius: 0.25rem;
         transition: all 150ms var(--default-easing);
+        user-select: none;
 
         span.icon {
           display: inline-block;
@@ -88,6 +89,7 @@ div.uploader {
         cursor: pointer;
         background-color: var(--primary-accent);
         transition: all 150ms var(--default-easing);
+        user-select: none;
 
         &:hover {
           background-color: color-mix(in srgb, var(--primary-accent) 85%, var(--lighter-mult) 15%);
@@ -108,6 +110,7 @@ div.uploader {
     font-family: 'Roboto', sans-serif;
     font-size: 1rem;
     font-weight: 500;
+    user-select: none;
   }
 
   div.selector-container {
@@ -216,7 +219,7 @@ div.viewer {
     justify-self: center;
     transition: all 200ms var(--default-easing);
     cursor: pointer;
-    
+    user-select: none;
 
     &:hover {
       background-color: color-mix(in srgb, var(--primary-accent) 85%, var(--lighter-mult) 15%);
@@ -259,6 +262,7 @@ div.generator {
     color: #ffffff;
     transition: all 200ms var(--default-easing);
     cursor: pointer;
+    user-select: none;
 
     &:hover {
       background-color: color-mix(in srgb, var(--primary-accent) 85%, var(--lighter-mult) 15%);
