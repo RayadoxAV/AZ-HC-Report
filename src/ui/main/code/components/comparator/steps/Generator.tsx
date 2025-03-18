@@ -126,6 +126,11 @@ const Generator: React.FC<GeneratorProps> = ({ active, className }) => {
   }
 
   function generateEmailString(changesObject: ChangesArray, hasChanged: boolean): string {
+
+    if (!hasChanged) {
+      alert('No changes for this week. Trying to generate email.');
+    }
+
     const headerString = `To: <>\nSubject: Cambios HC WK${secondEntry.week} | Practicantes\nX-Unsent: 1\nContent-Type: text/html\n`;
 
     const emailString =
@@ -448,7 +453,7 @@ const Generator: React.FC<GeneratorProps> = ({ active, className }) => {
           <td style="${before.changes.has('name') ? 'background-color: #ffb7bd' : ''}" class="child-4">${before.name}</td>
           <td style="text-align: center; ${before.changes.has('hireDate') ? 'background-color: #ffb7bd' : ''}" class="child-5">${formatDate(before.hireDate)}</td>
           <td style="text-align: center; ${before.changes.has('jobCode') ? 'background-color: #ffb7bd' : ''}" class="child-6">${before.jobCode}</td>
-          <td style="${before.changes.has('background-color: #ffb7bd') ? 'position' : ''}" class="child-7">${before.position}</td>
+          <td style="${before.changes.has('position') ? 'background-color: #ffb7bd' : ''}" class="child-7">${before.position}</td>
           <td style="text-align: center; ${before.changes.has('grade') ? 'background-color: #ffb7bd' : ''}" class="child-8">${before.grade}</td>
           <td style="text-align: center; ${before.changes.has('supervisorId') ? 'background-color: #ffb7bd' : ''}" class="child-9">${before.supervisorId}</td>
           <td style="${before.changes.has('supervisorId') ? 'background-color: #ffb7bd' : ''}" class="child-10">${before.supervisorName}</td>
