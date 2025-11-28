@@ -20,6 +20,7 @@ interface ChangesArray {
     'Laura': { before: AutoZoner, after: AutoZoner }[];
     'Marisol': { before: AutoZoner, after: AutoZoner }[];
     'Teresa': { before: AutoZoner, after: AutoZoner }[];
+    'Jesus': { before: AutoZoner, after: AutoZoner }[];
   };
   up: {
     'Corina': { before: AutoZoner, after: AutoZoner }[];
@@ -28,6 +29,7 @@ interface ChangesArray {
     'Laura': { before: AutoZoner, after: AutoZoner }[];
     'Marisol': { before: AutoZoner, after: AutoZoner }[];
     'Teresa': { before: AutoZoner, after: AutoZoner }[];
+    'Jesus': { before: AutoZoner, after: AutoZoner }[];
   };
   changes: {
     'Corina': { before: AutoZoner, after: AutoZoner }[];
@@ -36,6 +38,7 @@ interface ChangesArray {
     'Laura': { before: AutoZoner, after: AutoZoner }[];
     'Marisol': { before: AutoZoner, after: AutoZoner }[];
     'Teresa': { before: AutoZoner, after: AutoZoner }[];
+    'Jesus': { before: AutoZoner, after: AutoZoner }[];
   }
 }
 
@@ -81,7 +84,8 @@ const Generator: React.FC<GeneratorProps> = ({ active, className }) => {
         'Javier': [],
         'Laura': [],
         'Marisol': [],
-        'Teresa': []
+        'Teresa': [],
+        'Jesus': []
       },
       up: {
         'Corina': [],
@@ -89,7 +93,8 @@ const Generator: React.FC<GeneratorProps> = ({ active, className }) => {
         'Javier': [],
         'Laura': [],
         'Marisol': [],
-        'Teresa': []
+        'Teresa': [],
+        'Jesus': []
       },
       changes: {
         'Corina': [],
@@ -97,7 +102,8 @@ const Generator: React.FC<GeneratorProps> = ({ active, className }) => {
         'Javier': [],
         'Laura': [],
         'Marisol': [],
-        'Teresa': []
+        'Teresa': [],
+        'Jesus': []
       }
     };
 
