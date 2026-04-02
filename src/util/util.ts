@@ -33,7 +33,7 @@ export function getDateForCell(date: string): Date {
 }
 
 export function fillManagers(zoners: AutoZoner[], ) {
-  const managerIgnitionIds = ['10550553', '10550643', '10551051', '10551087', '10551566', '10550641', '10551601'];
+  const managerIgnitionIds = ['10550553', '10550643', '10551051', '10551087', '10551566', '10550641', '10551601', '10551115'];
   const managerNames = new Map<string, string>();
   managerNames.set('10550553', 'Corina');
   managerNames.set('10550643', 'Marisol');
@@ -42,6 +42,7 @@ export function fillManagers(zoners: AutoZoner[], ) {
   managerNames.set('10551566', 'Javier');
   managerNames.set('10550641', 'Teresa');
   managerNames.set('10551601', 'Jesus');
+  managerNames.set('10551115', 'Justino');
   const zonerMap = new Map<string, string>();
 
   for (let i = 0; i < zoners.length; i++) {
