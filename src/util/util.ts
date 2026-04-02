@@ -62,42 +62,44 @@ export function getDateForCell(date: string, format: string): Date {
 }
 
 export function fillManagers(zoners: AutoZoner[],) {
-  const managerIgnitionIds = ['10550553', '10550643', '10551051', '10551087', '10551566', '10550641', '10551601', '10551115'];
-  const managerNames = new Map<string, string>();
-  managerNames.set('10550553', 'Corina');
-  managerNames.set('10550643', 'Marisol');
-  managerNames.set('10551051', 'Laura');
-  managerNames.set('10551087', 'Gema');
-  managerNames.set('10551566', 'Javier');
-  managerNames.set('10550641', 'Teresa');
-  managerNames.set('10551601', 'Jesus');
-  managerNames.set('10551115', 'Justino');
-  const zonerMap = new Map<string, string>();
+  // const managerIgnitionIds = ['10550553', '10550643', '10551051', '10551087', '10551566', '10550641', '10551601', '10551115'];
+  // const managerNames = new Map<string, string>();
+  // managerNames.set('10550553', 'Corina');
+  // managerNames.set('10550643', 'Marisol');
+  // managerNames.set('10551051', 'Laura');
+  // managerNames.set('10551087', 'Gema');
+  // managerNames.set('10551566', 'Javier');
+  // managerNames.set('10550641', 'Teresa');
+  // managerNames.set('10551601', 'Jesus');
+  // managerNames.set('10551115', 'Justino');
+  // const zonerMap = new Map<string, string>();
 
-  for (let i = 0; i < zoners.length; i++) {
-    const currentZoner = zoners[i];
-    zonerMap.set(currentZoner.ignitionId, currentZoner.supervisorId);
-  }
+  // for (let i = 0; i < zoners.length; i++) {
+  //   const currentZoner = zoners[i];
+  //   zonerMap.set(currentZoner.ignitionId, currentZoner.supervisorId);
+  // }
 
-  for (let i = 0; i < zoners.length; i++) {
-    const currentZoner = zoners[i];
-    currentZoner.manager = managerNames.get(getDirectSupervisor(currentZoner.ignitionId)) || null;
-  }
+  // for (let i = 0; i < zoners.length; i++) {
+  //   const currentZoner = zoners[i];
+  //   currentZoner.manager = managerNames.get(getDirectSupervisor(currentZoner.ignitionId)) || null;
+  // }
 
-  function getDirectSupervisor(ignitionId: string): string {
-    if (managerIgnitionIds.includes(ignitionId)) {
-      return null;
-    }
+  // function getDirectSupervisor(ignitionId: string): string {
+  // //   if (managerIgnitionIds.includes(ignitionId)) {
+  // //     return null;
+  // //   }
 
-    const supervisorId = zonerMap.get(ignitionId);
-    if (!supervisorId) {
-      return null;
-    }
+  // //   const supervisorId = zonerMap.get(ignitionId);
+  // //   if (!supervisorId) {
+  // //     return null;
+  // //   }
 
-    if (managerIgnitionIds.includes(supervisorId)) {
-      return supervisorId;
-    } else {
-      return getDirectSupervisor(supervisorId);
-    }
-  }
+  // //   if (managerIgnitionIds.includes(supervisorId)) {
+  // //     return supervisorId;
+  // //   } else {
+  // //     return getDirectSupervisor(supervisorId);
+  // //   }
+
+  //   return 'hola';
+  // }
 }
