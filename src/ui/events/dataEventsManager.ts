@@ -10,7 +10,7 @@ const writeFile = promisify(fs.writeFile);
 
 import ServerLogger, { LogSeverity } from '../../util/serverLogger';
 import TransformedEntry from '../../data/models/entry';
-import { fillManagers, getCurrentFiscalYear, getDateForCell } from '../../util/util';
+import { determineSheetDateFormat, fillManagers, getCurrentFiscalYear, getDateForCell } from '../../util/util';
 import { AutoZoner } from '../../data/models/autozoner';
 import DBManager from '../../data/database/dbManager';
 import { BrowserWindow, shell } from 'electron';
@@ -147,6 +147,8 @@ export async function manageDataEvents(_: any, ...args: any[]): Promise<void> {
 
     const lastRowIndex = (sheet as Worksheet).actualRowCount;
 
+    const dateFormat = determineSheetDateFormat(sheet, lastRowIndex, 4);
+
     for (let i = 3; i < lastRowIndex; i++) {
       const row = sheet['_rows'][i];
 
@@ -155,7 +157,7 @@ export async function manageDataEvents(_: any, ...args: any[]): Promise<void> {
         ignitionId: `${row['_cells'][0].value}`,
         cc: `${row['_cells'][1].value}`,
         name: row['_cells'][3].value,
-        hireDate: getDateForCell(row['_cells'][4].value),
+        hireDate: getDateForCell(row['_cells'][4].value, dateFormat),
         jobCode: row['_cells'][5].value,
         position: row['_cells'][6].value,
         grade: Number.parseInt(row['_cells'][7].value),

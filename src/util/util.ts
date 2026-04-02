@@ -20,19 +20,48 @@ export function getCurrentFiscalYear(): number {
   }
 
   if (now.getTime() <= lastSaturday.getTime()) {
-    console.log(now, lastSaturday);
     return now.getFullYear();
   } else {
     return now.getFullYear() + 1;
   }
 }
 
-export function getDateForCell(date: string): Date {
-  const [day, month, year] = date.split('/');
+export function determineSheetDateFormat(sheet: any, lastRowIndex: number, columnIndex: number): 'MM/DD/YYYY' | 'DD/MM/YYYY' {
+  for (let i = 3; i < lastRowIndex; i++) {
+    const row = sheet['_rows'][i];
+
+    const dateCell = row['_cells'][columnIndex].value;
+
+    const [firstString, secondString] = dateCell.split('/');
+
+    const firstValue = Number.parseInt(firstString);
+    const secondValue = Number.parseInt(secondString);
+
+    if (firstValue > 12) {
+      // The firstValue is > 12 then it's a day, therefore format is DD/MM/YYYY
+      return 'DD/MM/YYYY';
+    } else if (secondValue > 12) {
+      // The secondValue is > 12 then it's a day, therefore format is MM/DD/YYYY
+      return 'MM/DD/YYYY';
+    }
+  }
+
+  return 'DD/MM/YYYY';
+}
+
+export function getDateForCell(date: string, format: string): Date {
+  let day, month, year;
+
+  if (format === 'MM/DD/YYYY') {
+    [month, day, year] = date.split('/');
+  } else {
+    [day, month, year] = date.split('/');
+  }
+
   return new Date(new Date(`${year}/${month}/${day}`).getTime() - 21600000);
 }
 
-export function fillManagers(zoners: AutoZoner[], ) {
+export function fillManagers(zoners: AutoZoner[],) {
   const managerIgnitionIds = ['10550553', '10550643', '10551051', '10551087', '10551566', '10550641', '10551601', '10551115'];
   const managerNames = new Map<string, string>();
   managerNames.set('10550553', 'Corina');
